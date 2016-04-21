@@ -58,7 +58,27 @@ public class LaneManager : MonoBehaviour {
 
     public void placeNewLane(float z)
     {
-        var curLane = ObjectPool.instance.getLaneSectionFromPool(ObjectPool.ObjectDifficulty.Easy);      
+        int diff = Util.instance.getRandomValue(0, 4);
+        ObjectPool.ObjectDifficulty difficulty = ObjectPool.ObjectDifficulty.Easy;
+        switch (diff)
+        {
+            case 0:
+                difficulty = ObjectPool.ObjectDifficulty.Easy;
+                break;
+            case 1:
+                difficulty = ObjectPool.ObjectDifficulty.Medium;
+                break;
+            case 2:
+                difficulty = ObjectPool.ObjectDifficulty.Hard;
+                break;
+            case 3:
+                difficulty = ObjectPool.ObjectDifficulty.Special;
+                break;
+            default:
+                difficulty = ObjectPool.ObjectDifficulty.Easy;
+                break;
+        }
+        var curLane = ObjectPool.instance.getLaneSectionFromPool(difficulty);      
         if(curLane!=null)
         {
             curLane.transform.position = new Vector3(0, 0, z);

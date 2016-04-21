@@ -27,6 +27,7 @@ public class GameManager : MonoBehaviour {
         Debug.Log("Distance between Players: " + distance);
         GravityState state = GravityState.PullFast;
         float velocity = 0;
+        float gravityFactor = 0.5f;
         if (distance == 0)
         {
             state = GravityState.PullFast;
@@ -68,11 +69,20 @@ public class GameManager : MonoBehaviour {
                 velocity = 0;
                 break;
         }
+        velocity *= gravityFactor;
         if(velocity < 0 || Player2.transform.localPosition.y < -0.65f)
         {
             Vector3 playerposition = Player2.transform.localPosition;
             playerposition.y += velocity;
             Player2.transform.position = playerposition;
+        }
+        if(Player2.transform.localPosition.y < -8.0f)
+        {
+            triggerObstacle();
+            Vector3 newyPos = Player2.transform.localPosition;
+            newyPos.y = -0.65f;               
+            Player2.transform.position = newyPos;
+            
         }
 	}
 
