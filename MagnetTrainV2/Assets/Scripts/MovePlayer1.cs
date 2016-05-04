@@ -12,6 +12,11 @@ public class MovePlayer1 : MonoBehaviour {
 
 	private bool left = false;
 	private bool right = false;
+    public bool ControlsActive
+    {
+        get;
+        set;
+    }
 
     void Update() {
 		playerposition = transform.position;
@@ -66,14 +71,21 @@ public class MovePlayer1 : MonoBehaviour {
         }
         if (collider.tag == "Pickup")
         {
-            GameManager.instance.triggerPickup();
+            GameManager.instance.triggerPickup(collider.tag);
+        }
+        if(collider.tag == "SlowPickup")
+        {
+            GameManager.instance.triggerPickup(collider.tag);
         }
     }
-    public void addPickup()
+   
+    public void setColliderStatus(bool status)
     {
-        playerMovementSpeed = playerMovementSpeed + 0.01f;
+            foreach (Collider c in GetComponentsInChildren<Collider>())
+            {
+                c.enabled = status;
+            }
     }
-
     public void resetPlayerPosition(float playerZPosition)
     {
         playerposition = transform.position;
@@ -82,6 +94,7 @@ public class MovePlayer1 : MonoBehaviour {
         playerposition.z = playerZPosition;
 
         transform.position = playerposition;
-        playerMovementSpeed = 0.1f;
+       
     }
+    
 }

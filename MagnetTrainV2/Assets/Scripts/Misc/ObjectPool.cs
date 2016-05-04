@@ -119,7 +119,7 @@ public class ObjectPool : MonoBehaviour
 
     }
    
-    public void returnLaneSectionToPool(GameObject obj)
+    public void ReturnLaneSectionToPool(GameObject obj)
     {
         List<GameObject> tmp;
         ObjectDifficulty diff;        

@@ -60,7 +60,7 @@ public class MovePlayer2 : MonoBehaviour
         }
         if (collider.tag == "Pickup")
         {
-            GameManager.instance.triggerPickup();           
+           // GameManager.instance.triggerPickup();           
         }
     }
     public void addPickup()

@@ -2,13 +2,17 @@
 using System.Collections;
 using System;
 
-public class GameManager : MonoBehaviour {
+public class GameManager : MonoBehaviour
+{
 
     public GameObject Player1;
     public GameObject Player2;
+    public GameObject Player1Shadow;
+    public GameObject Player2Shadow;
     public static GameManager instance = null;
+
     private enum GravityState
-    {      
+    {
         PullSlow,
         PullFast,
         FallSlow,
@@ -16,130 +20,68 @@ public class GameManager : MonoBehaviour {
         FallFast
     }
     // Use this for initialization
-    void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
+    void Start()
+    {
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
         var distance = Player1.transform.localPosition.x - Player2.transform.localPosition.x;
         distance = Mathf.Abs(distance);
         //Debug.Log("Distance between Players: " + distance);
-        GravityState state = GravityState.PullFast;
+
         float velocity = 0;
         float gravityFactor = 0.5f;
 
 
-		float upFactor = 0.2f;
-		float downFactor = -0.3f;
-		float distanceThreshold = 3f;
-		float maxDistance = 10f;
+        float upFactor = 0.2f;
+        float downFactor = -0.3f;
+        float distanceThreshold = 3f;
+        float maxDistance = 10f;
 
-		if (distance < distanceThreshold)
-		{
-			velocity = (1 - (distance / distanceThreshold)) * upFactor;
-		}
-		else
-		{
-			velocity = ((distance - distanceThreshold) / (maxDistance - distanceThreshold)) * downFactor;
-		}
+        if (distance < distanceThreshold)
+        {
+            velocity = (1 - (distance / distanceThreshold)) * upFactor;
+        }
+        else
+        {
+            velocity = ((distance - distanceThreshold) / (maxDistance - distanceThreshold)) * downFactor;
+        }
 
-
-		//if (distance < 2)
-		//{
-		//	state = GravityState.PullFast;
-		//}
-		//else if (distance < 4)
-		//{
-		//	state = GravityState.PullSlow;
-		//}
-		//else if (distance < 6)
-		//{
-		//	state = GravityState.FallSlow;
-		//}
-		//else if (distance < 8)
-		//{
-		//	state = GravityState.FallMedium;
-		//}
-		//else
-		//{
-		//	state = GravityState.FallFast;
-		//}
-
-		//if (distance == 0)
-		//{
-		//	state = GravityState.PullFast;
-		//}
-		//else if (distance == 2)
-		//{
-		//	state = GravityState.PullSlow;
-		//}
-		//else if (distance == 4)
-		//{
-		//	state = GravityState.FallSlow;
-		//}
-		//else if (distance == 6)
-		//{
-		//	state = GravityState.FallMedium;
-		//}
-		//else if (distance == 8)
-		//{
-		//	state = GravityState.FallFast;
-		//}
-		//Debug.Log("State = " + state.ToString());
-		//switch (state)
-		//{           
-		//    case GravityState.PullSlow:
-		//        velocity = 0.083f;
-		//        break;
-		//    case GravityState.PullFast:
-		//        velocity = 0.166f;
-		//        break;
-		//    case GravityState.FallSlow:
-		//        velocity = -0.083f;
-		//        break;
-		//    case GravityState.FallMedium:
-		//        velocity = -0.12f;
-		//        break;
-		//    case GravityState.FallFast:
-		//        velocity = -0.166f;
-		//        break;
-		//    default:
-		//        velocity = 0;
-		//        break;
-		//}
-
-
-		velocity *= gravityFactor;
-        if(velocity < 0 || Player2.transform.localPosition.y < -0.65f)
+        velocity *= gravityFactor;
+        if (velocity < 0 || Player2.transform.localPosition.y < -0.65f)
         {
             Vector3 playerposition = Player2.transform.localPosition;
             playerposition.y += velocity;
             Player2.transform.position = playerposition;
         }
-        if(Player2.transform.localPosition.y < -8.0f)
-		{
-			resetPlayerPosition(Player2.transform.localPosition.z);
-			Vector3 newyPos = Player2.transform.localPosition;
-            newyPos.y = -0.65f;               
-            Player2.transform.position = newyPos;
-            
-        }
-	}
-
-    internal void triggerPickup()
-    {
-        var playerScripts = FindObjectsOfType(typeof(MovePlayer1));
-        foreach (var item in playerScripts)
+        if (Player2.transform.localPosition.y < -8.0f)
         {
-            (item as MovePlayer1).addPickup();
+            resetPlayerPosition(Player2.transform.localPosition.z);
+            Vector3 newyPos = Player2.transform.localPosition;
+            newyPos.y = -0.65f;
+            Player2.transform.position = newyPos;
+
         }
-       
+    }
+
+    internal void triggerPickup(String pickupType)
+    {
+        if (pickupType == "Pickup")
+        {
+            LaneManager.instance.AddSpeed();
+        }
+        if (pickupType == "SlowPickup")
+        {
+            LaneManager.instance.DecreaseSpeed();
+        }
     }
 
     internal void triggerObstacle(float playerZPosition)
     {
-		resetPlayerPosition(playerZPosition);
+        resetPlayerPosition(playerZPosition);
     }
 
     void Awake()
@@ -147,22 +89,31 @@ public class GameManager : MonoBehaviour {
         instance = this;
     }
 
-	private void resetPlayerPosition(float playerZPosition)
-	{
-		//Debug.Log("playerZPosition: " + playerZPosition);
+    private void resetPlayerPosition(float playerZPosition)
+    {
 
-		float laneLength = 25.0f; // TODO: iwo herbekommen
-		float resetZPosition = (float) Math.Floor((playerZPosition + (laneLength / 2)) / laneLength) * laneLength - laneLength;
+        StartReset();
 
-		//Debug.Log("ResetPos: " + resetZPosition);
 
-		LaneManager.instance.placeRestartLane();
-
-		var playerScripts = FindObjectsOfType(typeof(MovePlayer1));
-		foreach (var item in playerScripts)
-		{
-			(item as MovePlayer1).resetPlayerPosition(resetZPosition);
-		}
-	}
-   
+    }
+    private void StartReset()
+    {
+        Invoke("StopReset", 1);
+        SetPlayerStatus(false);
+        LaneManager.instance.Rewind();
+    }
+    private void StopReset()
+    {
+        SetPlayerStatus(true);
+        LaneManager.instance.StopRewind();
+    }
+    private static void SetPlayerStatus(bool status)
+    {
+        var playerScripts = FindObjectsOfType(typeof(MovePlayer1));
+        foreach (var item in playerScripts)
+        {
+            (item as MovePlayer1).ControlsActive = status;
+            (item as MovePlayer1).setColliderStatus(status);
+        }
+    }
 }
