@@ -11,105 +11,75 @@ public class ObjectPool : MonoBehaviour
         Medium,
         Hard
     }
+
     public Dictionary<ObjectDifficulty, List<GameObject>> ObjectDictionary
     {
         get; internal set;
     }
 
-    /* 
-	 * TODO
-	 * 	1. Create the Prefabs in the Pool Class
-	 * 
-	 * 	2. Make a Pool for the Bullets (Use a stack to maintain them)
-	 * 		2.1 Look at the BulletFire.cs Script to switch the Instantiate Method
-	 * 		2.2 Look at the BulletDestroy.cs Script to switch the Destroy Method
-	 * 		2.3 Look at the Enemy.cs Script to switch the Destroy Method
-	 * 
-	 * 	3. Create a dictionary to manage two or more Objects in this class (Tipp: Use an enum for the Key Value)
-	 * 
-	 * 	4. Pool the Enemies
-	 * 		4.1 Look at the GameManager.cs Script to switch the Instantiate Method
-	 * 		4.2 Look at the Enemy.cs Script to switch the Destroy Method
-	 * 
-	 * 	5.Pool the Tiles (Tipp: be carfeful with the Script Execution Order)
-	 * 		5.1 Look at the GridManager.cs Script to switch the Instantiate Method
-	 * 		5.2 Look at the Tile.cs Script to switch the Destroy Method
-	 * 
-	 */
+    public static ObjectPool Instance = null;
 
-    /**
-	 * Used for the Singelton Pattern.
-	 * You can access this class from everywhere by:
-	 * 
-	 * ObjectPool.instance. ...
-	 */
-    public static ObjectPool instance = null;
     public List<GameObject> LaneListSpecial;    
-    public List<GameObject> LaneListSimple;
-    public List<GameObject> LaneListNormal;
+    public List<GameObject> LaneListEasy;
+    public List<GameObject> LaneListMedium;
     public List<GameObject> LaneListHard;
 
-    private int laneSectionCount = 5;    
+	public int InstancesPerPrefab;
+
     void Awake()
     {
-        instance = this;
-
-
+        Instance = this;
     }
-
 
     void Start()
     {
-
         FillDictionary();
     }
+
     private void FillDictionary()
     {
         ObjectDictionary = new Dictionary<ObjectDifficulty, List<GameObject>>();
-        CreateSectionList(ObjectDifficulty.Special, LaneListSpecial, laneSectionCount);
-        CreateSectionList(ObjectDifficulty.Easy, LaneListSimple, laneSectionCount);
-        CreateSectionList(ObjectDifficulty.Medium, LaneListNormal, laneSectionCount);
-        CreateSectionList(ObjectDifficulty.Hard, LaneListHard, laneSectionCount);   
-        
+        CreateSectionList(ObjectDifficulty.Special, LaneListSpecial, InstancesPerPrefab);
+        CreateSectionList(ObjectDifficulty.Easy, LaneListEasy, InstancesPerPrefab);
+        CreateSectionList(ObjectDifficulty.Medium, LaneListMedium, InstancesPerPrefab);
+        CreateSectionList(ObjectDifficulty.Hard, LaneListHard, InstancesPerPrefab);
     }
-    private void CreateSectionList(ObjectDifficulty difficulty, List<GameObject> prefabs, int count)
-    {
-        List<GameObject> tmp = new List<GameObject>();     
 
-        foreach (GameObject g in prefabs)
+    private void CreateSectionList(ObjectDifficulty difficulty, List<GameObject> prefabs, int instancesPerPrefab)
+    {
+        List<GameObject> laneList = new List<GameObject>();
+
+        foreach (GameObject lanePrefab in prefabs)
         {
-            for (int i = 0; i < count*2; i++)
+            for (int i = 0; i < instancesPerPrefab; i++)
             {
-                GameObject obj = GameObject.Instantiate(g) as GameObject;
-                obj.SetActive(false);
-                obj.transform.localPosition = obj.transform.position;
-                tmp.Add(obj);
+                GameObject lane = GameObject.Instantiate(lanePrefab) as GameObject;
+                lane.SetActive(false);
+                lane.transform.localPosition = lane.transform.position;
+                laneList.Add(lane);
             }            
         }
         
-        ObjectDictionary.Add(difficulty, tmp);
-      
+        ObjectDictionary.Add(difficulty, laneList);
     }
-    public GameObject getLaneSectionFromPool(ObjectDifficulty difficulty)
-    { 
-        
-        List<GameObject> tmp;
+
+    public GameObject GetLaneSectionFromPool(ObjectDifficulty difficulty)
+    {
+        List<GameObject> laneList;
        
-        if (ObjectDictionary.TryGetValue(difficulty, out tmp))
+        if (ObjectDictionary.TryGetValue(difficulty, out laneList))
         {
-            if(tmp != null)
-            {               
-                if(tmp.Count != 0)
-                {
-                    int getValue = Util.instance.getRandomValue(0, tmp.Count);
-                    GameObject curLane = tmp[getValue];                   
-                    tmp.Remove(curLane);
-                    return curLane;
-                }
-               
+            if(laneList != null && laneList.Count > 0)
+            {
+				int randomIndex = Util.Instance.getRandomValue(0, laneList.Count);
+
+				GameObject lane = laneList[randomIndex];
+				laneList.Remove(lane);
+
+				return lane;
             }
+
             return null;
-            
         }
         else
         {
@@ -119,30 +89,30 @@ public class ObjectPool : MonoBehaviour
 
     }
    
-    public void ReturnLaneSectionToPool(GameObject obj)
+    public void ReturnLaneSectionToPool(GameObject gameObject)
     {
-        List<GameObject> tmp;
-        ObjectDifficulty diff;        
-        switch(obj.tag)
-        {
-            case "Easy":
-                diff = ObjectDifficulty.Easy;
-                break;
-            case "Medium":
-                diff = ObjectDifficulty.Medium;
-                break;
-            case "Hard":
-                diff = ObjectDifficulty.Hard;
-                break;
-            default:
-                diff = ObjectDifficulty.Special;
-                break;
-        }
-        if (ObjectDictionary.TryGetValue(diff, out tmp))
+        List<GameObject> laneList;
+        ObjectDifficulty difficulty = GetDifficultyFromTag(gameObject.tag);
+		
+        if (ObjectDictionary.TryGetValue(difficulty, out laneList))
         {           
-            obj.SetActive(false);
-            tmp.Add(obj);
+            gameObject.SetActive(false);
+            laneList.Add(gameObject);
         }
-    }  
+    }
+
+	private ObjectDifficulty GetDifficultyFromTag(string tag)
+	{
+		Dictionary<string, ObjectDifficulty> difficulties = new Dictionary<string, ObjectDifficulty>();
+
+		difficulties.Add(Tags.Easy, ObjectDifficulty.Easy);
+		difficulties.Add(Tags.Medium, ObjectDifficulty.Medium);
+		difficulties.Add(Tags.Hard, ObjectDifficulty.Hard);
+		difficulties.Add(Tags.Special, ObjectDifficulty.Special);
+
+		if (difficulties.ContainsKey(tag)) return difficulties[tag];
+
+		return ObjectDifficulty.Easy;
+	}
 
 }

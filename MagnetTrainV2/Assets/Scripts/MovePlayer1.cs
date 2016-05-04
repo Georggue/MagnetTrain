@@ -3,15 +3,18 @@ using System.Collections;
 
 public class MovePlayer1 : MonoBehaviour {
 
-    private Vector3 playerposition;
-    private float playerMovementSpeed = 0.0f;
     public KeyCode KeyLeft;
     public KeyCode KeyRight;
 
 	public float HorizontalSpeed;
 
-	private bool left = false;
-	private bool right = false;
+	private bool _left = false;
+	private bool _right = false;
+
+	// evtl Werte berechnen oder iwo herholen
+	private float _leftBorder = -4f;
+	private float _rightBorder = 4f;
+
     public bool ControlsActive
     {
         get;
@@ -19,82 +22,45 @@ public class MovePlayer1 : MonoBehaviour {
     }
 
     void Update() {
-		playerposition = transform.position;
-		//bool left = Input.GetKeyDown(KeyLeft);
-		//bool right = Input.GetKeyDown(KeyRight);
+		if (Input.GetKeyDown(KeyLeft)) _left = true;
+		if (Input.GetKeyDown(KeyRight)) _right = true;
 
-		if (Input.GetKeyDown(KeyLeft)) left = true;
-		if (Input.GetKeyDown(KeyRight)) right = true;
+		if (Input.GetKeyUp(KeyLeft)) _left = false;
+		if (Input.GetKeyUp(KeyRight)) _right = false;
 
-		if (Input.GetKeyUp(KeyLeft)) left = false;
-		if (Input.GetKeyUp(KeyRight)) right = false;
+		float xPosition = transform.position.x;
 
-		//Blockiere das Spielemovement, wenn er versucht links aus dem Spielfeld zu laufen
-		if (left) {
-			if (playerposition.x >= -4f) {
-				//playerposition = new Vector3 (playerposition.x - 2, playerposition.y, playerposition.z);
-				playerposition = new Vector3(playerposition.x - 0.01f * HorizontalSpeed, playerposition.y, playerposition.z);
-			}
+		if (_left && xPosition >= _leftBorder) {
+			Util.Instance.MoveX(gameObject, -HorizontalSpeed);
 		}
-
-        //Blockiere das Spielemovement, wenn er versucht rechts aus dem Spielfeld zu laufen
-        if (right) {
-			if (playerposition.x <= 4f)
-			{
-				//playerposition = new Vector3(playerposition.x + 2, playerposition.y, playerposition.z);
-				playerposition = new Vector3 (playerposition.x + 0.01f * HorizontalSpeed, playerposition.y, playerposition.z);
-			}
+		
+        if (_right && xPosition <= _rightBorder)
+		{
+			Util.Instance.MoveX(gameObject, HorizontalSpeed);
 		}
-
-		playerposition = new Vector3 (playerposition.x,playerposition.y,playerposition.z+playerMovementSpeed);
-        
-        /*
-         * Auskommentieren und Wert ändern, ab wo der Spieler in den Spawn zurückgesetzt werden soll 
-		if (playerposition.z > 35) {
-			playerposition.z = -10.0f;
-		}
-        */
-            transform.position = playerposition;
 	}
-    void OnControllerColliderHit(ControllerColliderHit hit)
-    {
-        Debug.Log("Collider Hit");
 
-    }
     void OnTriggerEnter(Collider collider)
     {
         Debug.Log("Trigger Hit");
-        if (collider.tag == "Obstacle")
-        {
-            GameManager.instance.triggerObstacle(transform.position.z);
 
-        }
-        if (collider.tag == "Pickup")
+        if (collider.tag == Tags.Obstacle)
         {
-            GameManager.instance.triggerPickup(collider.tag);
+            GameManager.Instance.TriggerObstacleHit();
         }
-        if(collider.tag == "SlowPickup")
+
+        if (collider.tag == Tags.Pickup || collider.tag == Tags.SlowPickup)
         {
-            GameManager.instance.triggerPickup(collider.tag);
+            GameManager.Instance.TriggerPickupHit(collider.tag);
         }
     }
    
-    public void setColliderStatus(bool status)
+    public void SetColliderStatus(bool enabled)
     {
-            foreach (Collider c in GetComponentsInChildren<Collider>())
+            foreach (Collider collider in GetComponentsInChildren<Collider>())
             {
-                c.enabled = status;
+                collider.enabled = enabled;
             }
     }
-    public void resetPlayerPosition(float playerZPosition)
-    {
-        playerposition = transform.position;
 
-		playerposition.x = 0.0f; // Damit beide Spieler wieder uebereinander sind
-        playerposition.z = playerZPosition;
-
-        transform.position = playerposition;
-       
-    }
-    
 }

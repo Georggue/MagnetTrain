@@ -1,46 +1,35 @@
-##Minimalspiel
 
-*Spielerindikator
+## Nächster Zeitraum
 
-*Spielerreset anpassen
+* Punktezahl einbauen
 
-*spielerspawn anpassen
+* Überschneidung von Lanes bzw. Lücken zwischen Lanes beheben
 
-*flüssiges Spielerbewegung
-
-----------------------------------------------------
-
-##Erweitertes Spiel
-
-*Slow Down Pick Up
-
-*mehr Lanes
-
-*mehr Obstacles (evtl bewegende Obstacles)
-
+* mehrere verschiedene Obstacles erstellen (evtl bewegende Obstacles)
 
 ----------------------------------------------------
 
-##"Rest implementieren"
+## (bis 02.06) Gameplay implementieren
 
-*bei z > 3000 von vorne beginnen
+* mehr Lanes verschiedener Schwierigkeitsgrade erstellen
 
-*Spielerrollenwechsel
+* Spielerrollenwechsel implementieren
 
-*Punktezahl
+* Hauptmenü erstellen
 
-*Game Over Screen
+* evtl Game-Over Screen erstellen
+
+* evtl beim Reset beide Spieler zusätzlich auf die mittlere Lane zurücksetzen
 
 
 ----------------------------------------------------
-ab 02.06.16
 
-##Optik
+## (bis 30.06) Grafische Überarbeitung / Fertigstellung
 
-*Playermodel
+* Model für beide Player erstellen
 
-*Texturen (Wand, Pickup, Linie, Lane)
+* Texturen erstellen (Wand, Pickup, Linie, Lane)
 
-*Skybox ändern
+* Skybox ändern
 
-*Lets Play Video
+* Let's Play Video erstellen

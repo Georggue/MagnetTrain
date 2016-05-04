@@ -5,20 +5,30 @@ using System;
 public class GameManager : MonoBehaviour
 {
 
-    public GameObject Player1;
+	private enum GravityState
+	{
+		PullSlow,
+		PullFast,
+		FallSlow,
+		FallMedium,
+		FallFast
+	}
+
+	public static GameManager Instance = null;
+
+	public GameObject Player1;
     public GameObject Player2;
     public GameObject Player1Shadow;
     public GameObject Player2Shadow;
-    public static GameManager instance = null;
 
-    private enum GravityState
-    {
-        PullSlow,
-        PullFast,
-        FallSlow,
-        FallMedium,
-        FallFast
-    }
+	public float DistanceThreshold; // std: 3.0
+	public float UpFactor; // std: 0.1
+	public float DownFactor; // std: -0.15
+	public float MaximumYValue; // std: -8.0
+
+	// evtl den Wert iwo herbekommen/berechnen
+	private float _player2StartPositionY = -0.65f;
+
     // Use this for initialization
     void Start()
     {
@@ -30,90 +40,81 @@ public class GameManager : MonoBehaviour
     {
         var distance = Player1.transform.localPosition.x - Player2.transform.localPosition.x;
         distance = Mathf.Abs(distance);
-        //Debug.Log("Distance between Players: " + distance);
 
         float velocity = 0;
-        float gravityFactor = 0.5f;
-
-
-        float upFactor = 0.2f;
-        float downFactor = -0.3f;
-        float distanceThreshold = 3f;
+		
+		// TODO: evtl iwo LaneWidth herbekommen
         float maxDistance = 10f;
 
-        if (distance < distanceThreshold)
+        if (distance < DistanceThreshold)
         {
-            velocity = (1 - (distance / distanceThreshold)) * upFactor;
+            velocity = (1 - (distance / DistanceThreshold)) * UpFactor;
         }
         else
         {
-            velocity = ((distance - distanceThreshold) / (maxDistance - distanceThreshold)) * downFactor;
+            velocity = ((distance - DistanceThreshold) / (maxDistance - DistanceThreshold)) * DownFactor;
+        }
+		
+        if (velocity < 0 || Player2.transform.localPosition.y < _player2StartPositionY)
+        {
+			Util.Instance.MoveY(Player2, velocity);
         }
 
-        velocity *= gravityFactor;
-        if (velocity < 0 || Player2.transform.localPosition.y < -0.65f)
+        if (Player2.transform.localPosition.y < MaximumYValue)
         {
-            Vector3 playerposition = Player2.transform.localPosition;
-            playerposition.y += velocity;
-            Player2.transform.position = playerposition;
-        }
-        if (Player2.transform.localPosition.y < -8.0f)
-        {
-            resetPlayerPosition(Player2.transform.localPosition.z);
-            Vector3 newyPos = Player2.transform.localPosition;
-            newyPos.y = -0.65f;
-            Player2.transform.position = newyPos;
+            ResetPlayers();
 
+			Util.Instance.SetY(Player2, _player2StartPositionY);
+        }
+	}
+
+	void Awake()
+	{
+		Instance = this;
+	}
+
+	internal void TriggerPickupHit(string pickupTag)
+    {
+        if (pickupTag == Tags.Pickup)
+        {
+            LaneManager.Instance.AddSpeed();
+        }
+        if (pickupTag == Tags.SlowPickup)
+        {
+            LaneManager.Instance.DecreaseSpeed();
         }
     }
 
-    internal void triggerPickup(String pickupType)
+    internal void TriggerObstacleHit()
     {
-        if (pickupType == "Pickup")
-        {
-            LaneManager.instance.AddSpeed();
-        }
-        if (pickupType == "SlowPickup")
-        {
-            LaneManager.instance.DecreaseSpeed();
-        }
+        ResetPlayers();
     }
 
-    internal void triggerObstacle(float playerZPosition)
+    private void ResetPlayers()
     {
-        resetPlayerPosition(playerZPosition);
-    }
-
-    void Awake()
-    {
-        instance = this;
-    }
-
-    private void resetPlayerPosition(float playerZPosition)
-    {
-
         StartReset();
-
-
     }
+
     private void StartReset()
     {
         Invoke("StopReset", 1);
-        SetPlayerStatus(false);
-        LaneManager.instance.Rewind();
+        SetPlayerControlAndColliderStatus(false);
+        LaneManager.Instance.Rewind();
     }
+
     private void StopReset()
     {
-        SetPlayerStatus(true);
-        LaneManager.instance.StopRewind();
+        SetPlayerControlAndColliderStatus(true);
+        LaneManager.Instance.StopRewind();
     }
-    private static void SetPlayerStatus(bool status)
+
+    private void SetPlayerControlAndColliderStatus(bool enabled)
     {
         var playerScripts = FindObjectsOfType(typeof(MovePlayer1));
         foreach (var item in playerScripts)
         {
-            (item as MovePlayer1).ControlsActive = status;
-            (item as MovePlayer1).setColliderStatus(status);
+            (item as MovePlayer1).ControlsActive = enabled;
+            (item as MovePlayer1).SetColliderStatus(enabled);
         }
     }
 }

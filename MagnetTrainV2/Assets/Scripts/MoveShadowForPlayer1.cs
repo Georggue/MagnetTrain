@@ -3,25 +3,22 @@ using System.Collections;
 
 public class MoveShadowForPlayer1 : MonoBehaviour
 {
-
    
-    private Vector3 player2position;
-    private Vector3 position;
+    private Vector3 _player2Position;
+    private Vector3 _position;
 
     void Start()
     {
-        position.x = GameManager.instance.Player2.transform.position.x;
-        position.z = GameManager.instance.Player2.transform.position.z;
-        transform.position = position;
+        _position.x = GameManager.Instance.Player2.transform.position.x;
+        _position.z = GameManager.Instance.Player2.transform.position.z;
+        transform.position = _position;
     }
 
     // Update is called once per frame
     void Update()
     {        
-        player2position = GameManager.instance.Player2.transform.position;
+        _player2Position = GameManager.Instance.Player2.transform.position;
         
-        transform.position = new Vector3(player2position.x, 0.05f, player2position.z);
-
-
+        transform.position = new Vector3(_player2Position.x, 0.05f, _player2Position.z);
     }
 }

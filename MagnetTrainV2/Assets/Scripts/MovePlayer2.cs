@@ -53,12 +53,13 @@ public class MovePlayer2 : MonoBehaviour
     void OnTriggerEnter(Collider collider)
     {
         Debug.Log("Trigger Hit");
-        if (collider.tag == "Obstacle")
+
+        if (collider.tag == Tags.Obstacle)
         {
-            GameManager.instance.triggerObstacle(transform.position.z);
-            
+            GameManager.Instance.TriggerObstacleHit();
         }
-        if (collider.tag == "Pickup")
+
+        if (collider.tag == Tags.Pickup)
         {
            // GameManager.instance.triggerPickup();           
         }
@@ -67,7 +68,8 @@ public class MovePlayer2 : MonoBehaviour
     {
         playerMovementSpeed = playerMovementSpeed + 0.01f;
     }
-    public void setBackPlayer()
+
+    public void SetPlayerBack()
     {
         playerposition = transform.position;
         playerposition.z -= 10.0f;

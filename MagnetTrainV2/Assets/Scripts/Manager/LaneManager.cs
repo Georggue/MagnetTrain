@@ -5,19 +5,25 @@ using System;
 
 public class LaneManager : MonoBehaviour {
 
-    public GameObject playerPrefab;
-    public GameObject player2Prefab;
-    private GameObject player = null;   
-    private GameObject player2 = null;
-    public GameObject playershadowPrefab;
-    public GameObject player2shadowPrefab;
-    private GameObject playershadow = null;
-    private GameObject player2shadow = null;
+    public GameObject PlayerPrefab;
+    public GameObject Player2Prefab;
+    private GameObject _player = null;   
+    private GameObject _player2 = null;
+
+    public GameObject PlayerShadowPrefab;
+    public GameObject Player2ShadowPrefab;
+    private GameObject _playerShadow = null;
+    private GameObject _player2Shadow = null;
+
     private float MovementSpeed { get; set; }
-    public float MoveSpeedInitial;
+
+    public float InitialMovementSpeed;
+	public float SpeedIncrease;
+
     public GameObject LaneSection;
-    public static LaneManager instance = null;
-    public enum LaneSectionType
+    public static LaneManager Instance = null;
+
+	public enum LaneSectionType
     {
         Start,
         Easy,
@@ -25,46 +31,47 @@ public class LaneManager : MonoBehaviour {
         Hard,
         Special
     }
-    private Vector3 initialPos;
-    private bool isRewinding = false;
-    private float LaneLength
+
+    private Vector3 _initialPosition;
+
+    private bool _isRewinding = false;
+
+	private float LaneLength
     {
         get;
         set;
     }
+
     [Range(1,20)]
-    public int activeLaneCount;
+    public int ActiveLaneCount;
 
     void Awake()
     {
-        instance = this;
+        Instance = this;
     }
 
-    private int totalLaneCount;
 	// Use this for initialization
 	void Start () {
-        player = GameObject.Instantiate(playerPrefab) as GameObject;
-        player2 = GameObject.Instantiate(player2Prefab) as GameObject;
-        playershadow = GameObject.Instantiate(playershadowPrefab) as GameObject;
-        player2shadow = GameObject.Instantiate(player2shadowPrefab) as GameObject;
+        _player = GameObject.Instantiate(PlayerPrefab) as GameObject;
+        _player2 = GameObject.Instantiate(Player2Prefab) as GameObject;
+        _playerShadow = GameObject.Instantiate(PlayerShadowPrefab) as GameObject;
+        _player2Shadow = GameObject.Instantiate(Player2ShadowPrefab) as GameObject;
 
         //Reference the player. you can get him now from everywhere by using the Util Class
-        Util.instance.mPlayer = player;
-        GameManager.instance.Player1 = player;
-        GameManager.instance.Player2 = player2;
+        GameManager.Instance.Player1 = _player;
+        GameManager.Instance.Player2 = _player2;
    
-         //place starting lane
-        initialPos = new Vector3(0, 0, 0);
-        MovementSpeed = MoveSpeedInitial;
-        //placeNewLane((int)initialPos.z);
+		ResetSpeed();
+		
         LaneLength = LaneSection.transform.GetChild(0).GetChild(0).localScale.z;
 
+		//place starting lane
 		// TODO: iwann evtl EmptyLane statt Special
-		placeNewLane(0f, ObjectPool.ObjectDifficulty.Special, false);
+		PlaceNewLane(0f, ObjectPool.ObjectDifficulty.Special);
 
-        for (int i = 1; i < activeLaneCount ; i++)
+        for (int i = 1; i < ActiveLaneCount ; i++)
         {
-            placeNewLane(i * LaneLength);
+            PlaceNewLane(i * LaneLength);
         }
 	}
 
@@ -73,24 +80,22 @@ public class LaneManager : MonoBehaviour {
     {
         foreach (var lane in GetActiveLanes())
         {
-            Util.instance.MoveZ(lane, -MovementSpeed);
-            if (lane.transform.position.z <= -25 && !isRewinding)
-            {
+            Util.Instance.MoveZ(lane, -MovementSpeed);
 
-                ObjectPool.instance.ReturnLaneSectionToPool(lane);
+            if (lane.transform.position.z <= -LaneLength && !_isRewinding)
+            {
+                ObjectPool.Instance.ReturnLaneSectionToPool(lane);
                 TriggerNewLane();
             }
-
         }
-
     }
 
-    public void placeNewLane(float z)
-    {
-        int diff = Util.instance.getRandomValue(0, 4);
+    private void PlaceNewLane(float z)
+	{
+		int randomNumber = Util.Instance.getRandomValue(0, 4);
         ObjectPool.ObjectDifficulty difficulty;
 
-        switch (diff)
+        switch (randomNumber)
         {
             case 0:
                 difficulty = ObjectPool.ObjectDifficulty.Easy;
@@ -109,18 +114,18 @@ public class LaneManager : MonoBehaviour {
                 break;
         }
 
-		placeNewLane(z, difficulty, false);
+		PlaceNewLane(z, difficulty);
 
 	}
 
-	public void placeNewLane(float z, ObjectPool.ObjectDifficulty difficulty, bool independent)
+	private void PlaceNewLane(float z, ObjectPool.ObjectDifficulty difficulty)
 	{
-		var curLane = ObjectPool.instance.getLaneSectionFromPool(difficulty);
-		if (curLane != null)
+		var lane = ObjectPool.Instance.GetLaneSectionFromPool(difficulty);
+
+		if (lane != null)
 		{
-			curLane.transform.position = new Vector3(0, 0, z);
-			curLane.SetActive(true);
-			if (!independent) totalLaneCount++;
+			lane.transform.position = new Vector3(0, 0, z);
+			lane.SetActive(true);
 		}
 		else
 		{
@@ -128,17 +133,11 @@ public class LaneManager : MonoBehaviour {
 		}
 	}
 
-	public void placeRestartLane3(float zPosition)
-	{
-		// TODO: (falls mehrere Streckentypen in Special sind -> nur EmptyLanes nehmen)
-		placeNewLane(zPosition, ObjectPool.ObjectDifficulty.Special, true);
-	}
-
-    public void TriggerNewLane()
+    private void TriggerNewLane()
     {
         var lanes = GetActiveLanes();
-       //TODO: finetuning
-        placeNewLane((lanes.Count * LaneLength)-0.25f);
+		//TODO: finetuning
+		PlaceNewLane((lanes.Count * LaneLength) - 0.25f);
     }
 
 
@@ -148,23 +147,26 @@ public class LaneManager : MonoBehaviour {
 	private List<GameObject> GetActiveLanes()
 	{
         List<GameObject> activeLanes = new List<GameObject>();
-        activeLanes.AddRange(GameObject.FindGameObjectsWithTag("Easy"));
-        activeLanes.AddRange(GameObject.FindGameObjectsWithTag("Medium"));
-        activeLanes.AddRange(GameObject.FindGameObjectsWithTag("Hard"));
-        activeLanes.AddRange(GameObject.FindGameObjectsWithTag("Special"));
+
+        activeLanes.AddRange(GameObject.FindGameObjectsWithTag(Tags.Easy));
+        activeLanes.AddRange(GameObject.FindGameObjectsWithTag(Tags.Medium));
+        activeLanes.AddRange(GameObject.FindGameObjectsWithTag(Tags.Hard));
+        activeLanes.AddRange(GameObject.FindGameObjectsWithTag(Tags.Special));
+
         activeLanes.Sort(
             (l1, l2) => l1.transform.position.z.CompareTo(l2.transform.position.z)
         );
+		
         return activeLanes;
 	}
 
 	public void Rewind()
 	{
-        isRewinding = true;
+        _isRewinding = true;
         GameObject lastLane;
 
         List<GameObject> activeLanes = GetActiveLanes();     
-        if(activeLanes[0].transform.position.z + (LaneLength/2) < player.transform.position.z )
+        if(activeLanes[0].transform.position.z + (LaneLength / 2) < _player.transform.position.z )
         {
             //Player is on Lane 1
             lastLane = activeLanes[1];
@@ -172,8 +174,8 @@ public class LaneManager : MonoBehaviour {
         }
         else
         {
-            lastLane = activeLanes[0];
             //Player is on Lane 0
+            lastLane = activeLanes[0];
         }
 
         MovementSpeed = -(LaneLength / 60);
@@ -187,23 +189,27 @@ public class LaneManager : MonoBehaviour {
 		//}
 		
 		// TODO: (falls mehrere Streckentypen in Special sind -> nur EmptyLanes nehmen)
-		placeNewLane(z, ObjectPool.ObjectDifficulty.Special, true);
+		PlaceNewLane(z, ObjectPool.ObjectDifficulty.Special);
 	}
+
     public void StopRewind()
     {
-        isRewinding = false;
+        _isRewinding = false;
         ResetSpeed();
     }
+
     public void ResetSpeed()
     {
-        MovementSpeed = MoveSpeedInitial;
+        MovementSpeed = InitialMovementSpeed;
     }
+
     public void AddSpeed()
     {
-        MovementSpeed = MovementSpeed + 0.01f;
+        MovementSpeed += SpeedIncrease;
     }
+
     public void DecreaseSpeed()
     {
-        MovementSpeed = MovementSpeed - 0.01f;
+        MovementSpeed -= SpeedIncrease;
     }
 }
