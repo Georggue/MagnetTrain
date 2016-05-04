@@ -62,9 +62,9 @@ public class LaneManager : MonoBehaviour {
 		// TODO: iwann evtl EmptyLane statt Special
 		placeNewLane(0f, ObjectPool.ObjectDifficulty.Special, false);
 
-        for (int i = 0; i < activeLaneCount - 1; i++)
+        for (int i = 1; i < activeLaneCount ; i++)
         {
-            placeNewLane(totalLaneCount * LaneLength);
+            placeNewLane(i * LaneLength);
         }
 	}
 
@@ -74,7 +74,7 @@ public class LaneManager : MonoBehaviour {
         foreach (var lane in GetActiveLanes())
         {
             Util.instance.MoveZ(lane, -MovementSpeed);
-            if (lane.transform.position.z < -25 && !isRewinding)
+            if (lane.transform.position.z <= -25 && !isRewinding)
             {
 
                 ObjectPool.instance.ReturnLaneSectionToPool(lane);
@@ -137,8 +137,8 @@ public class LaneManager : MonoBehaviour {
     public void TriggerNewLane()
     {
         var lanes = GetActiveLanes();
-       //TODO: POSITIONS
-        placeNewLane(125);
+       //TODO: finetuning
+        placeNewLane((lanes.Count * LaneLength)-0.25f);
     }
 
 
