@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using System;
 
 public class LaneManager : MonoBehaviour {
 
@@ -18,7 +20,11 @@ public class LaneManager : MonoBehaviour {
         Special
     }
     private Vector3 initialPos;
-    private float laneLength = 0;
+    private float LaneLength
+    {
+        get;
+        set;
+    }
     [Range(1,20)]
     public int activeLaneCount;
 
@@ -32,22 +38,22 @@ public class LaneManager : MonoBehaviour {
 	void Start () {
         player = GameObject.Instantiate(playerPrefab) as GameObject;
         player2 = GameObject.Instantiate(player2Prefab) as GameObject;
-        //Reference the playe. you can get him now from everywhere by using the Util Class
+        //Reference the player. you can get him now from everywhere by using the Util Class
         Util.instance.mPlayer = player;
         GameManager.instance.Player1 = player;
         GameManager.instance.Player2 = player2;
-        //player.transform.position = new Vector3(-0.4f, 2, -10);
-        //player2.transform.position = new Vector3(-0.4f, -1, -10);
+   
          //place starting lane
-         initialPos = new Vector3(0, 0, 0);      
-        placeNewLane((int)initialPos.z);
-        laneLength = LaneSection.transform.GetChild(0).GetChild(0).localScale.z;
+        initialPos = new Vector3(0, 0, 0);
+        //placeNewLane((int)initialPos.z);
+        LaneLength = LaneSection.transform.GetChild(0).GetChild(0).localScale.z;
 
+		// TODO: iwann evtl EmptyLane statt Special
+		placeNewLane(0f, ObjectPool.ObjectDifficulty.Special, false);
 
-        for (int i = 0; i < activeLaneCount; i++)
-        {   
-            placeNewLane(totalLaneCount * laneLength);
-           
+        for (int i = 0; i < activeLaneCount - 1; i++)
+        {
+            placeNewLane(totalLaneCount * LaneLength);
         }
 	}
 	
@@ -60,6 +66,7 @@ public class LaneManager : MonoBehaviour {
     {
         int diff = Util.instance.getRandomValue(0, 4);
         ObjectPool.ObjectDifficulty difficulty = ObjectPool.ObjectDifficulty.Easy;
+
         switch (diff)
         {
             case 0:
@@ -78,22 +85,67 @@ public class LaneManager : MonoBehaviour {
                 difficulty = ObjectPool.ObjectDifficulty.Easy;
                 break;
         }
-        var curLane = ObjectPool.instance.getLaneSectionFromPool(difficulty);      
-        if(curLane!=null)
-        {
-            curLane.transform.position = new Vector3(0, 0, z);
-            curLane.SetActive(true);
-            totalLaneCount++;
-        }
-        else
-        {
-          // Debug.Log("Error while getting Lane from Pool.");
-        }
-       
-    }
+
+		placeNewLane(z, difficulty, false);
+
+	}
+
+	public void placeNewLane(float z, ObjectPool.ObjectDifficulty difficulty, bool independent)
+	{
+		var curLane = ObjectPool.instance.getLaneSectionFromPool(difficulty);
+		if (curLane != null)
+		{
+			curLane.transform.position = new Vector3(0, 0, z);
+			curLane.SetActive(true);
+			if (!independent) totalLaneCount++;
+		}
+		else
+		{
+			// Debug.Log("Error while getting Lane from Pool.");
+		}
+	}
+
+	public void placeRestartLane3(float zPosition)
+	{
+		// TODO: (falls mehrere Streckentypen in Special sind -> nur EmptyLanes nehmen)
+		placeNewLane(zPosition, ObjectPool.ObjectDifficulty.Special, true);
+	}
+
     public void triggerNewLane()
     {
-        placeNewLane(totalLaneCount * laneLength);
+        placeNewLane(totalLaneCount * LaneLength);
     }
 
+
+
+
+
+	private List<GameObject> GetActiveLanes()
+	{
+        List<GameObject> activeLanes = new List<GameObject>();
+        activeLanes.AddRange(GameObject.FindGameObjectsWithTag("Easy"));
+        activeLanes.AddRange(GameObject.FindGameObjectsWithTag("Medium"));
+        activeLanes.AddRange(GameObject.FindGameObjectsWithTag("Hard"));
+        activeLanes.AddRange(GameObject.FindGameObjectsWithTag("Special"));
+        activeLanes.Sort(
+            (l1, l2) => l1.transform.position.z.CompareTo(l2.transform.position.z)
+        );
+        return activeLanes;
+	}
+
+	public void placeRestartLane()
+	{
+		List<GameObject> activeLanes = GetActiveLanes();
+		
+		for (int i = 0; i < activeLanes.Count; i++)
+		{
+			GameObject lane = activeLanes[i];
+			Util.instance.SetZ(lane, (i + 1) * LaneLength);
+		}
+		
+		// TODO: (falls mehrere Streckentypen in Special sind -> nur EmptyLanes nehmen)
+		placeNewLane(0.0f, ObjectPool.ObjectDifficulty.Special, true);
+	}
+
+	
 }

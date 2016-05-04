@@ -55,7 +55,7 @@ public class MovePlayer2 : MonoBehaviour
         Debug.Log("Trigger Hit");
         if (collider.tag == "Obstacle")
         {
-            GameManager.instance.triggerObstacle();
+            GameManager.instance.triggerObstacle(transform.position.z);
             
         }
         if (collider.tag == "Pickup")

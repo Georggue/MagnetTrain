@@ -48,5 +48,17 @@ public class Util : MonoBehaviour
     {
         return Random.Range(min, max);
     }
+    public void SetZ(GameObject gameObject, float z)
+    {
+        Vector3 newPosition = gameObject.transform.position;
+        newPosition.z = z;
+        gameObject.transform.position = newPosition;
+    }
 
+    public void MoveZ(GameObject gameObject, float zDelta)
+    {
+        Vector3 newPosition = gameObject.transform.position;
+        newPosition.z = newPosition.z + zDelta;
+        gameObject.transform.position = newPosition;
+    }
 }
