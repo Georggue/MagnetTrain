@@ -1,35 +1,33 @@
 
-## Nächster Zeitraum
+## NÃ¤chster Zeitraum
 
-* Punktezahl einbauen
-
-* Überschneidung von Lanes bzw. Lücken zwischen Lanes beheben
-
-* mehrere verschiedene Obstacles erstellen (evtl bewegende Obstacles)
-
+* Pickups: evtl entfernen, Geschwindigkeit in AbhÃ¤ngigkeit von Punktmultiplikator setzen (Basti)
+* Ãœberschneidung von Lanes bzw. LÃ¼cken zwischen Lanes beheben (Georg)
+* mehr Lanes verschiedener Schwierigkeitsgrade erstellen (Alle)
+* obstacles: Gravity-inversion, Rollenwechsel, (fies: Steuerung invertieren) (Eric)
+* Spielerleben + harte Pickups fÃ¼r extra lives (Basti)
+* Bei ZurÃ¼cksetzen: evtl Effekt bei obstacle hit (Georg)
+* evtl beim Reset beide Spieler zusÃ¤tzlich auf die mittlere Lane zurÃ¼cksetzen (Georg)
 ----------------------------------------------------
 
 ## (bis 02.06) Gameplay implementieren
 
-* mehr Lanes verschiedener Schwierigkeitsgrade erstellen
+* HauptmenÃ¼ erstellen
 
-* Spielerrollenwechsel implementieren
-
-* Hauptmenü erstellen
-
-* evtl Game-Over Screen erstellen
-
-* evtl beim Reset beide Spieler zusätzlich auf die mittlere Lane zurücksetzen
-
-
+* evtl Game-Over Screen / Highscore Liste erstellen
+ 
 ----------------------------------------------------
 
-## (bis 30.06) Grafische Überarbeitung / Fertigstellung
+## (bis 30.06) Grafische Ãœberarbeitung / Fertigstellung
 
-* Model für beide Player erstellen
+* Spielerswitch animation
+
+* Death animation
+
+* Model fÃ¼r beide Player erstellen
 
 * Texturen erstellen (Wand, Pickup, Linie, Lane)
 
-* Skybox ändern
+* Skybox Ã¤ndern
 
 * Let's Play Video erstellen
