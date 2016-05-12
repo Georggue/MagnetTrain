@@ -3,17 +3,26 @@ using System.Collections;
 
 public class MoveObstacle : MonoBehaviour
 {
+
+    public enum MoveDirection
+    {
+        Left = -1,
+        Right = 1
+    }
     [Range(0, 5)] public float Range;
 
     public float Speed;
 
+    public MoveDirection StartingDirection;
     private float _initialPos;
     private int _factor;
+    
     // Use this for initialization
     void Start()
     {
         _initialPos = transform.position.x;
-        _factor = 1;
+        
+        _factor = (int)StartingDirection;
     }
 
     // Update is called once per frame
