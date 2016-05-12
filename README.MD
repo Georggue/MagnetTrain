@@ -8,6 +8,7 @@
 * Spielerleben + harte Pickups für extra lives (Basti)
 * Bei Zurücksetzen: evtl Effekt bei obstacle hit (Georg)
 * evtl beim Reset beide Spieler zusätzlich auf die mittlere Lane zurücksetzen (Georg)
+
 ----------------------------------------------------
 
 ## (bis 02.06) Gameplay implementieren
