@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -29,10 +30,17 @@ public class GameManager : MonoBehaviour
 	// evtl den Wert iwo herbekommen/berechnen
 	private float _player2StartPositionY = -0.65f;
 
+    //Variablen für Score
+    public Text scoreText;
+    public int score;
+    public int scoreMultiplier;
+
     // Use this for initialization
     void Start()
     {
-
+        score = 0;
+        scoreMultiplier = 1;
+        scoreText.text = "Score: " + score.ToString() + " Multiplier: " + scoreMultiplier.ToString();
     }
 
     // Update is called once per frame
@@ -66,7 +74,8 @@ public class GameManager : MonoBehaviour
 
 			Util.Instance.SetY(Player2, _player2StartPositionY);
         }
-	}
+        scoreText.text = "Score: " + score.ToString() + " Multiplier: " + scoreMultiplier.ToString();
+    }
 
 	void Awake()
 	{
@@ -83,6 +92,8 @@ public class GameManager : MonoBehaviour
         {
             LaneManager.Instance.DecreaseSpeed();
         }
+        score = score + 10 * scoreMultiplier;
+        scoreMultiplier = scoreMultiplier + 1;
     }
 
     internal void TriggerObstacleHit()
@@ -106,6 +117,8 @@ public class GameManager : MonoBehaviour
     {
         SetPlayerControlAndColliderStatus(true);
         LaneManager.Instance.StopRewind();
+        score = score - 10*scoreMultiplier; //>Score reduzieren, wenn der Spieler mit einem Objekt kollidiert
+        scoreMultiplier = 1; //Score Multiplier reset
     }
 
     private void SetPlayerControlAndColliderStatus(bool enabled)
