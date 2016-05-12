@@ -27,13 +27,17 @@ public class GameManager : MonoBehaviour
 	public float DownFactor; // std: -0.15
 	public float MaximumYValue; // std: -8.0
 
-	// evtl den Wert iwo herbekommen/berechnen
-	private float _player2StartPositionY = -0.65f;
-
-    //Variablen für Score
+                                //Variablen für Score
     public Text scoreText;
     public int score;
     public int scoreMultiplier;
+
+    // evtl den Wert iwo herbekommen/berechnen
+    private float _player2StartPositionY = -0.65f;
+
+    private Material _player1Color;
+    private Material _player2Color;
+   
 
     // Use this for initialization
     void Start()
@@ -41,6 +45,8 @@ public class GameManager : MonoBehaviour
         score = 0;
         scoreMultiplier = 1;
         scoreText.text = "Score: " + score.ToString() + " Multiplier: " + scoreMultiplier.ToString();
+       
+        
     }
 
     // Update is called once per frame
@@ -80,9 +86,16 @@ public class GameManager : MonoBehaviour
 	void Awake()
 	{
 		Instance = this;
-	}
+        Invoke("SetPlayerMaterials",0.25f);
+    }
 
-	internal void TriggerPickupHit(string pickupTag)
+    public void SetPlayerMaterials()
+    {
+        _player1Color = Player1.GetComponent<Renderer>().material;
+        _player2Color = Player2.GetComponent<Renderer>().material;
+    }
+
+    internal void TriggerPickupHit(string pickupTag)
     {
         if (pickupTag == Tags.Pickup)
         {
@@ -124,11 +137,27 @@ public class GameManager : MonoBehaviour
     private void SetPlayerControlAndColliderStatus(bool enabled)
     {
         var playerScripts = FindObjectsOfType(typeof(MovePlayer1));
+        if (!enabled)
+        {
+            Player1.GetComponent<Renderer>().material.color = new Color(_player1Color.color.r, _player1Color.color.g,
+                _player1Color.color.b, 0.1f);
+            Player2.GetComponent<Renderer>().material.color = new Color(_player2Color.color.r, _player2Color.color.g,
+                _player2Color.color.b, 0.1f);
+        }
+        else
+        {
+            Player1.GetComponent<Renderer>().material.color = new Color(_player1Color.color.r, _player1Color.color.g,
+               _player1Color.color.b, 1f);
+            Player2.GetComponent<Renderer>().material.color = new Color(_player2Color.color.r, _player2Color.color.g,
+                _player2Color.color.b, 1f);
+        }
+      
         foreach (var item in playerScripts)
         {
             var movePlayer1 = item as MovePlayer1;
             if (movePlayer1 != null)
             {
+                
                 movePlayer1.ControlsActive = enabled;
                 movePlayer1.SetColliderStatus(enabled);
             }

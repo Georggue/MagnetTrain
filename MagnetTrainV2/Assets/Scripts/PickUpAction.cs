@@ -15,6 +15,6 @@ public class PickUpAction : MonoBehaviour {
 
     void OnTriggerEnter(Collider collider)
     {
-        Destroy(this);
+      this.gameObject.SetActive(false);
     }
 }
