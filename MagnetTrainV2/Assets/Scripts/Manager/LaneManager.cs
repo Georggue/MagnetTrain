@@ -73,7 +73,9 @@ public class LaneManager : MonoBehaviour {
         {
             PlaceNewLane(i * LaneLength);
         }
-	}
+        GameManager.Instance.scoreMultiplier = 1;
+        GameManager.Instance.score = 0;
+    }
 
     // FixedUpdate is called every physics step (0.02ms)
     void FixedUpdate()
@@ -115,8 +117,9 @@ public class LaneManager : MonoBehaviour {
         }
 
 		PlaceNewLane(z, difficulty);
-
-	}
+        GameManager.Instance.scoreMultiplier = GameManager.Instance.scoreMultiplier + (randomNumber + 1);
+        GameManager.Instance.score = GameManager.Instance.score + 10 * GameManager.Instance.scoreMultiplier * (randomNumber + 1);
+    }
 
 	private void PlaceNewLane(float z, ObjectPool.ObjectDifficulty difficulty)
 	{
