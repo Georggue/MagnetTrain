@@ -113,8 +113,13 @@ public class GameManager : MonoBehaviour
         var playerScripts = FindObjectsOfType(typeof(MovePlayer1));
         foreach (var item in playerScripts)
         {
-            (item as MovePlayer1).ControlsActive = enabled;
-            (item as MovePlayer1).SetColliderStatus(enabled);
+            var movePlayer1 = item as MovePlayer1;
+            if (movePlayer1 != null)
+            {
+                movePlayer1.ControlsActive = enabled;
+                movePlayer1.SetColliderStatus(enabled);
+            }
+          
         }
     }
 }

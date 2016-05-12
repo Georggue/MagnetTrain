@@ -48,7 +48,7 @@ public class ObjectPool : MonoBehaviour
     private void CreateSectionList(ObjectDifficulty difficulty, List<GameObject> prefabs, int instancesPerPrefab)
     {
         List<GameObject> laneList = new List<GameObject>();
-
+        
         foreach (GameObject lanePrefab in prefabs)
         {
             for (int i = 0; i < instancesPerPrefab; i++)

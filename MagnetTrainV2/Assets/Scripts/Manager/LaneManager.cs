@@ -92,7 +92,7 @@ public class LaneManager : MonoBehaviour {
 
     private void PlaceNewLane(float z)
 	{
-		int randomNumber = Util.Instance.getRandomValue(0, 4);
+		var randomNumber = Util.Instance.getRandomValue(0, 4);
         ObjectPool.ObjectDifficulty difficulty;
 
         switch (randomNumber)
