@@ -40,26 +40,26 @@ public class MovePlayer1 : MonoBehaviour {
 		}
 	}
 
-    void OnTriggerEnter(Collider collider)
+    void OnTriggerEnter(Collider coll)
     {
         Debug.Log("Trigger Hit");
 
-        if (collider.tag == Tags.Obstacle)
+        if (coll.tag == Tags.Obstacle)
         {
             GameManager.Instance.TriggerObstacleHit();
         }
 
-        if (collider.tag == Tags.Pickup || collider.tag == Tags.SlowPickup)
+        if (coll.tag == Tags.Pickup || coll.tag == Tags.SlowPickup)
         {
-            GameManager.Instance.TriggerPickupHit(collider.tag);
+            GameManager.Instance.TriggerPickupHit(coll.tag);
         }
     }
    
-    public void SetColliderStatus(bool enabled)
+    public void SetColliderStatus(bool collStatus)
     {
-            foreach (Collider collider in GetComponentsInChildren<Collider>())
+            foreach (Collider coll in GetComponentsInChildren<Collider>())
             {
-                collider.enabled = enabled;
+                coll.enabled = collStatus;
             }
     }
 

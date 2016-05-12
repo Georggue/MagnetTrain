@@ -71,7 +71,7 @@ public class ObjectPool : MonoBehaviour
         {
             if(laneList != null && laneList.Count > 0)
             {
-				int randomIndex = Util.Instance.getRandomValue(0, laneList.Count);
+				int randomIndex = Util.Instance.GetRandomValue(0, laneList.Count);
 
 				GameObject lane = laneList[randomIndex];
 				laneList.Remove(lane);
@@ -89,28 +89,30 @@ public class ObjectPool : MonoBehaviour
 
     }
    
-    public void ReturnLaneSectionToPool(GameObject gameObject)
+    public void ReturnLaneSectionToPool(GameObject curObject)
     {
         List<GameObject> laneList;
-        ObjectDifficulty difficulty = GetDifficultyFromTag(gameObject.tag);
+        ObjectDifficulty difficulty = GetDifficultyFromTag(curObject.tag);
 		
         if (ObjectDictionary.TryGetValue(difficulty, out laneList))
         {           
-            gameObject.SetActive(false);
-            laneList.Add(gameObject);
+            curObject.SetActive(false);
+            laneList.Add(curObject);
         }
     }
 
-	private ObjectDifficulty GetDifficultyFromTag(string tag)
+	private ObjectDifficulty GetDifficultyFromTag(string curTag)
 	{
-		Dictionary<string, ObjectDifficulty> difficulties = new Dictionary<string, ObjectDifficulty>();
+	    Dictionary<string, ObjectDifficulty> difficulties = new Dictionary<string, ObjectDifficulty>
+	    {
+	        {Tags.Easy, ObjectDifficulty.Easy},
+	        {Tags.Medium, ObjectDifficulty.Medium},
+	        {Tags.Hard, ObjectDifficulty.Hard},
+	        {Tags.Special, ObjectDifficulty.Special}
+	    };
 
-		difficulties.Add(Tags.Easy, ObjectDifficulty.Easy);
-		difficulties.Add(Tags.Medium, ObjectDifficulty.Medium);
-		difficulties.Add(Tags.Hard, ObjectDifficulty.Hard);
-		difficulties.Add(Tags.Special, ObjectDifficulty.Special);
 
-		if (difficulties.ContainsKey(tag)) return difficulties[tag];
+	    if (difficulties.ContainsKey(curTag)) return difficulties[curTag];
 
 		return ObjectDifficulty.Easy;
 	}

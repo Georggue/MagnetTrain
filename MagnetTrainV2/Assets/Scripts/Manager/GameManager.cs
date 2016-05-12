@@ -28,9 +28,9 @@ public class GameManager : MonoBehaviour
 	public float MaximumYValue; // std: -8.0
 
                                 //Variablen für Score
-    public Text scoreText;
-    public int score;
-    public int scoreMultiplier;
+    public Text ScoreText;
+    public int Score;
+    public int ScoreMultiplier;
 
     // evtl den Wert iwo herbekommen/berechnen
     private float _player2StartPositionY = -0.65f;
@@ -42,9 +42,9 @@ public class GameManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        score = 0;
-        scoreMultiplier = 1;
-        scoreText.text = "Score: " + score.ToString() + " Multiplier: " + scoreMultiplier.ToString();
+        Score = 0;
+        ScoreMultiplier = 1;
+        ScoreText.text = "Score: " + Score.ToString() + " Multiplier: " + ScoreMultiplier.ToString();
        
         
     }
@@ -58,7 +58,7 @@ public class GameManager : MonoBehaviour
         float velocity = 0;
 		
 		// TODO: evtl iwo LaneWidth herbekommen
-        float maxDistance = 10f;
+        const float maxDistance = 10f;
 
         if (distance < DistanceThreshold)
         {
@@ -80,7 +80,7 @@ public class GameManager : MonoBehaviour
 
 			Util.Instance.SetY(Player2, _player2StartPositionY);
         }
-        scoreText.text = "Score: " + score.ToString() + " Multiplier: " + scoreMultiplier.ToString();
+        ScoreText.text = "Score: " + Score.ToString() + " Multiplier: " + ScoreMultiplier.ToString();
     }
 
 	void Awake()
@@ -105,8 +105,8 @@ public class GameManager : MonoBehaviour
         {
             LaneManager.Instance.DecreaseSpeed();
         }
-        score = score + 10 * scoreMultiplier;
-        scoreMultiplier = scoreMultiplier + 1;
+        Score = Score + 10 * ScoreMultiplier;
+        ScoreMultiplier = ScoreMultiplier + 1;
     }
 
     internal void TriggerObstacleHit()
@@ -130,14 +130,14 @@ public class GameManager : MonoBehaviour
     {
         SetPlayerControlAndColliderStatus(true);
         LaneManager.Instance.StopRewind();
-        score = score - 10*scoreMultiplier; //>Score reduzieren, wenn der Spieler mit einem Objekt kollidiert
-        scoreMultiplier = 1; //Score Multiplier reset
+        Score = Score - 10*ScoreMultiplier; //>Score reduzieren, wenn der Spieler mit einem Objekt kollidiert
+        ScoreMultiplier = 1; //Score Multiplier reset
     }
 
-    private void SetPlayerControlAndColliderStatus(bool enabled)
+    private void SetPlayerControlAndColliderStatus(bool playerControlsEnabled)
     {
         var playerScripts = FindObjectsOfType(typeof(MovePlayer1));
-        if (!enabled)
+        if (!playerControlsEnabled)
         {
             Player1.GetComponent<Renderer>().material.color = new Color(_player1Color.color.r, _player1Color.color.g,
                 _player1Color.color.b, 0.1f);
@@ -158,8 +158,8 @@ public class GameManager : MonoBehaviour
             if (movePlayer1 != null)
             {
                 
-                movePlayer1.ControlsActive = enabled;
-                movePlayer1.SetColliderStatus(enabled);
+                movePlayer1.ControlsActive = playerControlsEnabled;
+                movePlayer1.SetColliderStatus(playerControlsEnabled);
             }
           
         }

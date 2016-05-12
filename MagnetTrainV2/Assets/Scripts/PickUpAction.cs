@@ -13,7 +13,7 @@ public class PickUpAction : MonoBehaviour {
 	
 	}
 
-    void OnTriggerEnter(Collider collider)
+    void OnTriggerEnter(Collider coll)
     {
       this.gameObject.SetActive(false);
     }
