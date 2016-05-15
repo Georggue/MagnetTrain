@@ -86,8 +86,10 @@ public class LaneManager : MonoBehaviour {
 
             if (lane.transform.position.z <= -LaneLength && !_isRewinding)
             {
+                Debug.Log("Position alte Lane: " + lane.transform.position.z);
+                var oldPos = lane.transform.position.z;
                 ObjectPool.Instance.ReturnLaneSectionToPool(lane);
-                TriggerNewLane();
+                TriggerNewLane(oldPos);
             }
         }
     }
@@ -136,11 +138,14 @@ public class LaneManager : MonoBehaviour {
 		}
 	}
 
-    private void TriggerNewLane()
+    private void TriggerNewLane(float oldPos)
     {
         var lanes = GetActiveLanes();
-		//TODO: finetuning
-		PlaceNewLane((lanes.Count * LaneLength) - 0.25f);
+        //Take old position (-25.xxx) and add the length of all active lanes +1 additional lane to account for the lane behind the player
+        var newPos = oldPos + ((lanes.Count+1)*LaneLength) ;
+        Debug.Log("Position neue Lane: " + newPos);
+
+        PlaceNewLane(newPos);
     }
 
 

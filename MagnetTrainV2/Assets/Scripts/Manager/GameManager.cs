@@ -21,6 +21,7 @@ public class GameManager : MonoBehaviour
     public GameObject Player2;
     public GameObject Player1Shadow;
     public GameObject Player2Shadow;
+    public GameObject ObstacleHitEffect;
 
 	public float DistanceThreshold; // std: 3.0
 	public float UpFactor; // std: 0.1
@@ -109,8 +110,11 @@ public class GameManager : MonoBehaviour
         ScoreMultiplier = ScoreMultiplier + 1;
     }
 
-    internal void TriggerObstacleHit()
+    internal void TriggerObstacleHit(int playerNumber)
     {
+        var position = playerNumber == 1 ? Player1.transform.position : Player2.transform.position;
+
+        Instantiate(ObstacleHitEffect, position, ObstacleHitEffect.transform.rotation);
         ResetPlayers();
     }
 

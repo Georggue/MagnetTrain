@@ -5,8 +5,9 @@ public class MovePlayer1 : MonoBehaviour {
 
     public KeyCode KeyLeft;
     public KeyCode KeyRight;
-
-	public float HorizontalSpeed;
+    [Range(1,2)]
+    public int PlayerNumber;
+    public float HorizontalSpeed;
 
 	private bool _left = false;
 	private bool _right = false;
@@ -46,7 +47,7 @@ public class MovePlayer1 : MonoBehaviour {
 
         if (coll.tag == Tags.Obstacle)
         {
-            GameManager.Instance.TriggerObstacleHit();
+            GameManager.Instance.TriggerObstacleHit(PlayerNumber);
         }
 
         if (coll.tag == Tags.Pickup || coll.tag == Tags.SlowPickup)

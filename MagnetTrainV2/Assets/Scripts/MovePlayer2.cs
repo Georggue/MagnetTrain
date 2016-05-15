@@ -9,7 +9,7 @@ public class MovePlayer2 : MonoBehaviour
 
     private Vector3 _playerposition;
     private float _playerMovementSpeed = 0.1f;
-
+    public int PlayerNumber;
     public void SetMovementSpeed(float newval)
     {
         _playerMovementSpeed = newval;
@@ -59,7 +59,7 @@ public class MovePlayer2 : MonoBehaviour
 
         if (collider.tag == Tags.Obstacle)
         {
-            GameManager.Instance.TriggerObstacleHit();
+            GameManager.Instance.TriggerObstacleHit(PlayerNumber);
         }
 
         if (collider.tag == Tags.Pickup)
