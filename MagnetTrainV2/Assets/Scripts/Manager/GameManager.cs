@@ -147,6 +147,15 @@ public class GameManager : MonoBehaviour
                 _player1Color.color.b, 0.1f);
             Player2.GetComponent<Renderer>().material.color = new Color(_player2Color.color.r, _player2Color.color.g,
                 _player2Color.color.b, 0.1f);
+            Vector3 startPosition1 = Player1.transform.position;
+            Vector3 startPosition2 = Player2.transform.position;
+            Vector3 endPosition1 = new Vector3(0f, 0.65f,-10f);
+            Vector3 endPosition2 = new Vector3(0f, -0.65f, -10f);
+            StartCoroutine(MoveObject(Player1, startPosition1, endPosition1, 1f));
+            StartCoroutine(MoveObject(Player2, startPosition2, endPosition2, 1f));
+          
+           
+
         }
         else
         {
@@ -167,5 +176,39 @@ public class GameManager : MonoBehaviour
             }
           
         }
+    }
+    private IEnumerator MoveObject(GameObject gameObj, Vector3 startPos, Vector3 endPos, float time)
+    {
+      
+        float i = 0.0f;
+        float rate = 1.0f / time;
+        while (i < 1.0)
+        {
+            i += Time.deltaTime * rate;
+            gameObj.transform.position = Vector3.Lerp(startPos, endPos, i);
+            yield return new WaitForEndOfFrame();
+        }
+    }
+
+    public IEnumerator MoveOverSpeed(GameObject objectToMove, Vector3 end, float speed)
+    {
+        // speed should be 1 unit per second
+        while (objectToMove.transform.position != end)
+        {
+            objectToMove.transform.position = Vector3.MoveTowards(objectToMove.transform.position, end, speed * Time.deltaTime);
+            yield return new WaitForEndOfFrame();
+        }
+    }
+    public IEnumerator MoveOverSeconds(GameObject objectToMove, Vector3 end, float seconds)
+    {
+        float elapsedTime = 0;
+        Vector3 startingPos = objectToMove.transform.position;
+        while (elapsedTime < seconds)
+        {
+            transform.position = Vector3.Lerp(startingPos, end, (elapsedTime / seconds));
+            elapsedTime += Time.deltaTime;
+            yield return new WaitForEndOfFrame();
+        }
+        transform.position = end;
     }
 }

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Xml.Schema;
 
 public class MovePlayer1 : MonoBehaviour {
 
@@ -15,31 +16,50 @@ public class MovePlayer1 : MonoBehaviour {
 	// evtl Werte berechnen oder iwo herholen
 	private float _leftBorder = -4f;
 	private float _rightBorder = 4f;
-
+    private bool _controlsActive = true;
     public bool ControlsActive
     {
-        get;
-        set;
+        get
+        {
+            return _controlsActive;
+        }
+        set
+        {
+            if (value == false)
+            {
+                _left = false;
+                _right = false;
+            }
+            _controlsActive = value;
+          
+        }
     }
 
-    void Update() {
-		if (Input.GetKeyDown(KeyLeft)) _left = true;
-		if (Input.GetKeyDown(KeyRight)) _right = true;
+    void Awake()
+    {
+        ControlsActive = true;
+    }
+    void Update()
+    {
+        if (!ControlsActive) return;
+        if (Input.GetKeyDown(KeyLeft)) _left = true;
+        if (Input.GetKeyDown(KeyRight)) _right = true;
 
-		if (Input.GetKeyUp(KeyLeft)) _left = false;
-		if (Input.GetKeyUp(KeyRight)) _right = false;
+        if (Input.GetKeyUp(KeyLeft)) _left = false;
+        if (Input.GetKeyUp(KeyRight)) _right = false;
 
-		float xPosition = transform.position.x;
+        float xPosition = transform.position.x;
 
-		if (_left && xPosition >= _leftBorder) {
-			Util.Instance.MoveX(gameObject, -HorizontalSpeed);
-		}
-		
+        if (_left && xPosition >= _leftBorder)
+        {
+            Util.Instance.MoveX(gameObject, -HorizontalSpeed);
+        }
+
         if (_right && xPosition <= _rightBorder)
-		{
-			Util.Instance.MoveX(gameObject, HorizontalSpeed);
-		}
-	}
+        {
+            Util.Instance.MoveX(gameObject, HorizontalSpeed);
+        }
+    }
 
     void OnTriggerEnter(Collider coll)
     {
