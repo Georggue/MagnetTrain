@@ -2,6 +2,7 @@
 using System.Collections;
 using System;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour
 {
@@ -28,10 +29,15 @@ public class GameManager : MonoBehaviour
 	public float DownFactor; // std: -0.15
 	public float MaximumYValue; // std: -8.0
 
-                                //Variablen für Score
+    //Variablen für Score
     public Text ScoreText;
     public int Score;
     public int ScoreMultiplier;
+    //Variablen für Spielerleben
+    public int playerLife;
+    //Variablen für Playermovementspeed
+    private List<int> movementIncrementMultiplier = new List<int> { 10, 25, 50, 100, 250, 500, 1000 };
+    private List<float> movementIncrementSpeed = new List<float> { 0.3f, 0.35f, 0.4f, 0.45f, 0.5f, 0.6f };
 
     // evtl den Wert iwo herbekommen/berechnen
     private float _player2StartPositionY = -0.65f;
@@ -44,10 +50,9 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         Score = 0;
+        playerLife = 3;
         ScoreMultiplier = 1;
-        ScoreText.text = "Score: " + Score.ToString() + " Multiplier: " + ScoreMultiplier.ToString();
-       
-        
+        ScoreText.text = "Score: " + Score.ToString() + " Multiplier: " + ScoreMultiplier.ToString() +"\n Leben: " + playerLife.ToString();       
     }
 
     // Update is called once per frame
@@ -81,7 +86,9 @@ public class GameManager : MonoBehaviour
 
 			Util.Instance.SetY(Player2, _player2StartPositionY);
         }
-        ScoreText.text = "Score: " + Score.ToString() + " Multiplier: " + ScoreMultiplier.ToString();
+
+        CheckForSpeedUpdate();
+        ScoreText.text = "Score: " + Score.ToString() + " Multiplier: " + ScoreMultiplier.ToString() + "\n Leben: " + playerLife.ToString();
     }
 
 	void Awake()
@@ -98,22 +105,32 @@ public class GameManager : MonoBehaviour
 
     internal void TriggerPickupHit(string pickupTag)
     {
-        if (pickupTag == Tags.Pickup)
+        if(pickupTag == Tags.Pickup)
         {
-            LaneManager.Instance.AddSpeed();
+            Score = Score + 10 * ScoreMultiplier;
+            //Debug.Log("Pickup eingesammelt");
         }
-        if (pickupTag == Tags.SlowPickup)
+
+        if(pickupTag == Tags.LifePickup)
         {
-            LaneManager.Instance.DecreaseSpeed();
+            playerLife = playerLife + 1;
+            Score = Score + 10 * ScoreMultiplier;
+            ScoreMultiplier = ScoreMultiplier + 1;
+            //Debug.Log("LifePickup eingesammelt");
         }
-        Score = Score + 10 * ScoreMultiplier;
-        ScoreMultiplier = ScoreMultiplier + 1;
     }
 
     internal void TriggerObstacleHit(int playerNumber)
     {
-        var position = playerNumber == 1 ? Player1.transform.position : Player2.transform.position;
+        playerLife = playerLife - 1;
+        if(playerLife == 0)
+        {
+            //zu debug zwecken
+            playerLife = 1;
+            //call GameOver
+        }
 
+        var position = playerNumber == 1 ? Player1.transform.position : Player2.transform.position;
         Instantiate(ObstacleHitEffect, position, ObstacleHitEffect.transform.rotation);
         ResetPlayers();
     }
@@ -140,7 +157,7 @@ public class GameManager : MonoBehaviour
 
     private void SetPlayerControlAndColliderStatus(bool playerControlsEnabled)
     {
-        var playerScripts = FindObjectsOfType(typeof(MovePlayer1));
+        var playerScripts = FindObjectsOfType(typeof(MovePlayer));
         if (!playerControlsEnabled)
         {
             Player1.GetComponent<Renderer>().material.color = new Color(_player1Color.color.r, _player1Color.color.g,
@@ -152,9 +169,7 @@ public class GameManager : MonoBehaviour
             Vector3 endPosition1 = new Vector3(0f, 0.65f,-10f);
             Vector3 endPosition2 = new Vector3(0f, -0.65f, -10f);
             StartCoroutine(MoveObject(Player1, startPosition1, endPosition1, 1f));
-            StartCoroutine(MoveObject(Player2, startPosition2, endPosition2, 1f));
-          
-           
+            StartCoroutine(MoveObject(Player2, startPosition2, endPosition2, 1f));         
 
         }
         else
@@ -167,16 +182,16 @@ public class GameManager : MonoBehaviour
       
         foreach (var item in playerScripts)
         {
-            var movePlayer1 = item as MovePlayer1;
+            var movePlayer1 = item as MovePlayer;
             if (movePlayer1 != null)
             {
                 
                 movePlayer1.ControlsActive = playerControlsEnabled;
                 movePlayer1.SetColliderStatus(playerControlsEnabled);
-            }
-          
+            }         
         }
     }
+
     private IEnumerator MoveObject(GameObject gameObj, Vector3 startPos, Vector3 endPos, float time)
     {
       
@@ -199,6 +214,7 @@ public class GameManager : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
     }
+
     public IEnumerator MoveOverSeconds(GameObject objectToMove, Vector3 end, float seconds)
     {
         float elapsedTime = 0;
@@ -210,5 +226,29 @@ public class GameManager : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
         transform.position = end;
+    }
+
+    public void CheckForSpeedUpdate()
+    {
+        int multiplierindex = - 1;
+
+        foreach ( var multiplier in movementIncrementMultiplier)
+        {
+            if (multiplier >= ScoreMultiplier)
+            {
+                multiplierindex = movementIncrementMultiplier.IndexOf(multiplier);
+            }  
+        }
+        if (multiplierindex != -1)
+        {
+            foreach (var value in movementIncrementSpeed)
+            {
+                if (movementIncrementSpeed.IndexOf(value) == movementIncrementMultiplier.IndexOf(ScoreMultiplier))
+                {
+                    //update Movement Speed
+                    LaneManager.Instance.setSpeed(value);
+                }
+            }
+        }
     }
 }

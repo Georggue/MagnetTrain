@@ -148,10 +148,6 @@ public class LaneManager : MonoBehaviour {
         PlaceNewLane(newPos);
     }
 
-
-
-
-
 	private List<GameObject> GetActiveLanes()
 	{
         List<GameObject> activeLanes = new List<GameObject>();
@@ -219,5 +215,10 @@ public class LaneManager : MonoBehaviour {
     public void DecreaseSpeed()
     {
         MovementSpeed -= SpeedIncrease;
+    }
+
+    public void setSpeed(float speed)
+    {
+        MovementSpeed = speed;
     }
 }

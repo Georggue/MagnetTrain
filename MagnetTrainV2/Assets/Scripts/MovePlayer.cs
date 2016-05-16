@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Xml.Schema;
 
-public class MovePlayer1 : MonoBehaviour {
+public class MovePlayer : MonoBehaviour {
 
     public KeyCode KeyLeft;
     public KeyCode KeyRight;
@@ -17,6 +17,7 @@ public class MovePlayer1 : MonoBehaviour {
 	private float _leftBorder = -4f;
 	private float _rightBorder = 4f;
     private bool _controlsActive = true;
+
     public bool ControlsActive
     {
         get
@@ -30,8 +31,7 @@ public class MovePlayer1 : MonoBehaviour {
                 _left = false;
                 _right = false;
             }
-            _controlsActive = value;
-          
+            _controlsActive = value;    
         }
     }
 
@@ -39,6 +39,7 @@ public class MovePlayer1 : MonoBehaviour {
     {
         ControlsActive = true;
     }
+
     void Update()
     {
         if (!ControlsActive) return;
@@ -69,8 +70,7 @@ public class MovePlayer1 : MonoBehaviour {
         {
             GameManager.Instance.TriggerObstacleHit(PlayerNumber);
         }
-
-        if (coll.tag == Tags.Pickup || coll.tag == Tags.SlowPickup)
+        else
         {
             GameManager.Instance.TriggerPickupHit(coll.tag);
         }
@@ -78,10 +78,10 @@ public class MovePlayer1 : MonoBehaviour {
    
     public void SetColliderStatus(bool collStatus)
     {
-            foreach (Collider coll in GetComponentsInChildren<Collider>())
-            {
-                coll.enabled = collStatus;
-            }
+        foreach (Collider coll in GetComponentsInChildren<Collider>())
+        {
+            coll.enabled = collStatus;
+        }
     }
 
 }
