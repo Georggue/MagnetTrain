@@ -26,7 +26,7 @@ public class MovePlayer : MonoBehaviour {
         }
         set
         {
-            if (value == false)
+            if (!value)
             {
                 _left = false;
                 _right = false;
@@ -70,6 +70,14 @@ public class MovePlayer : MonoBehaviour {
         {
             GameManager.Instance.TriggerObstacleHit(PlayerNumber);
         }
+		else if (coll.tag == Tags.ReverseMagnetTrigger)
+		{
+			GameManager.Instance.ReverseMagnet = true;
+		}
+		else if (coll.tag == Tags.ResetMagnetTrigger)
+		{
+			GameManager.Instance.ReverseMagnet = false;
+		}
         else
         {
             GameManager.Instance.TriggerPickupHit(coll.tag);

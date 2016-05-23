@@ -14,4 +14,7 @@ public class Tags : MonoBehaviour {
 	public static readonly string Pickup = "Pickup";
     public static readonly string LifePickup = "LifePickup";
 
+	public static readonly string ReverseMagnetTrigger = "ReverseMagnetTrigger";
+	public static readonly string ResetMagnetTrigger = "ResetMagnetTrigger";
+
 }

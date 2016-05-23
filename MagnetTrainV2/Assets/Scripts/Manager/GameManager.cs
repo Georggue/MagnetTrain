@@ -39,8 +39,9 @@ public class GameManager : MonoBehaviour
     private List<int> movementIncrementMultiplier = new List<int> { 10, 25, 50, 100, 250, 500, 1000 };
     private List<float> movementIncrementSpeed = new List<float> { 0.3f, 0.35f, 0.4f, 0.45f, 0.5f, 0.6f };
 
-    // evtl den Wert iwo herbekommen/berechnen
-    private float _player2StartPositionY = -0.65f;
+	// evtl den Wert iwo herbekommen/berechnen
+	public bool ReverseMagnet { get; set; }
+	private float _player2StartPositionY = -0.65f;
 
     private Material _player1Color;
     private Material _player2Color;
@@ -58,38 +59,45 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        var distance = Player1.transform.localPosition.x - Player2.transform.localPosition.x;
-        distance = Mathf.Abs(distance);
+		CheckPlayerDistance();
 
-        float velocity = 0;
-		
-		// TODO: evtl iwo LaneWidth herbekommen
-        const float maxDistance = 10f;
-
-        if (distance < DistanceThreshold)
-        {
-            velocity = (1 - (distance / DistanceThreshold)) * UpFactor;
-        }
-        else
-        {
-            velocity = ((distance - DistanceThreshold) / (maxDistance - DistanceThreshold)) * DownFactor;
-        }
-		
-        if (velocity < 0 || Player2.transform.localPosition.y < _player2StartPositionY)
-        {
-			Util.Instance.MoveY(Player2, velocity);
-        }
-
-        if (Player2.transform.localPosition.y < MaximumYValue)
-        {
-            ResetPlayers();
-
-			Util.Instance.SetY(Player2, _player2StartPositionY);
-        }
-
-        CheckForSpeedUpdate();
+		CheckForSpeedUpdate();
         ScoreText.text = "Score: " + Score.ToString() + " Multiplier: " + ScoreMultiplier.ToString() + "\n Leben: " + playerLife.ToString();
     }
+
+	private void CheckPlayerDistance()
+	{
+		var distance = Player1.transform.localPosition.x - Player2.transform.localPosition.x;
+		distance = Mathf.Abs(distance);
+
+		float velocity = 0;
+
+		// TODO: evtl iwo LaneWidth herbekommen
+		const float maxDistance = 10f;
+
+		if (distance < DistanceThreshold)
+		{
+			velocity = (1 - (distance / DistanceThreshold)) * UpFactor;
+		}
+		else
+		{
+			velocity = ((distance - DistanceThreshold) / (maxDistance - DistanceThreshold)) * DownFactor;
+		}
+
+		if (ReverseMagnet) velocity *= -1;
+
+		if (velocity < 0 || Player2.transform.localPosition.y < _player2StartPositionY)
+		{
+			Util.Instance.MoveY(Player2, velocity);
+		}
+
+		if (Player2.transform.localPosition.y < MaximumYValue)
+		{
+			ResetPlayers();
+
+			Util.Instance.SetY(Player2, _player2StartPositionY);
+		}
+	}
 
 	void Awake()
 	{
