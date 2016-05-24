@@ -78,6 +78,10 @@ public class MovePlayer : MonoBehaviour {
 		{
 			GameManager.Instance.ReverseMagnet = false;
 		}
+		else if (coll.tag == Tags.PlayerSwitchTrigger)
+		{
+			GameManager.Instance.SwitchPlayers();
+		}
         else
         {
             GameManager.Instance.TriggerPickupHit(coll.tag);

@@ -16,5 +16,6 @@ public class Tags : MonoBehaviour {
 
 	public static readonly string ReverseMagnetTrigger = "ReverseMagnetTrigger";
 	public static readonly string ResetMagnetTrigger = "ResetMagnetTrigger";
+	public static readonly string PlayerSwitchTrigger = "PlayerSwitchTrigger";
 
 }

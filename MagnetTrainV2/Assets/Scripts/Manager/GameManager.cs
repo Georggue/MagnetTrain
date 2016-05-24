@@ -53,11 +53,11 @@ public class GameManager : MonoBehaviour
         Score = 0;
         playerLife = 3;
         ScoreMultiplier = 1;
-        ScoreText.text = "Score: " + Score.ToString() + " Multiplier: " + ScoreMultiplier.ToString() +"\n Leben: " + playerLife.ToString();       
+        ScoreText.text = "Score: " + Score.ToString() + " Multiplier: " + ScoreMultiplier.ToString() +"\n Leben: " + playerLife.ToString();
     }
 
-    // Update is called once per frame
-    void Update()
+	// Update is called once per frame
+	void Update()
     {
 		CheckPlayerDistance();
 
@@ -102,7 +102,7 @@ public class GameManager : MonoBehaviour
 	void Awake()
 	{
 		Instance = this;
-        Invoke("SetPlayerMaterials",0.25f);
+        Invoke("SetPlayerMaterials", 0.25f);
     }
 
     public void SetPlayerMaterials()
@@ -113,13 +113,13 @@ public class GameManager : MonoBehaviour
 
     internal void TriggerPickupHit(string pickupTag)
     {
-        if(pickupTag == Tags.Pickup)
+        if (pickupTag == Tags.Pickup)
         {
             Score = Score + 10 * ScoreMultiplier;
             //Debug.Log("Pickup eingesammelt");
         }
 
-        if(pickupTag == Tags.LifePickup)
+        if (pickupTag == Tags.LifePickup)
         {
             playerLife = playerLife + 1;
             Score = Score + 10 * ScoreMultiplier;
@@ -131,7 +131,7 @@ public class GameManager : MonoBehaviour
     internal void TriggerObstacleHit(int playerNumber)
     {
         playerLife = playerLife - 1;
-        if(playerLife == 0)
+        if (playerLife == 0)
         {
             //zu debug zwecken
             playerLife = 1;
@@ -191,9 +191,9 @@ public class GameManager : MonoBehaviour
         foreach (var item in playerScripts)
         {
             var movePlayer1 = item as MovePlayer;
+
             if (movePlayer1 != null)
             {
-                
                 movePlayer1.ControlsActive = playerControlsEnabled;
                 movePlayer1.SetColliderStatus(playerControlsEnabled);
             }         
@@ -245,7 +245,7 @@ public class GameManager : MonoBehaviour
             if (multiplier >= ScoreMultiplier)
             {
                 multiplierindex = movementIncrementMultiplier.IndexOf(multiplier);
-            }  
+            }
         }
         if (multiplierindex != -1)
         {
@@ -258,5 +258,39 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
-    }
+	}
+
+	public void SwitchPlayers()
+	{
+		MovePlayer player1Script = (MovePlayer)Player1.GetComponent(typeof(MovePlayer));
+		MovePlayer player2Script = (MovePlayer)Player2.GetComponent(typeof(MovePlayer));
+
+		player1Script.ControlsActive = false;
+		player2Script.ControlsActive = false;
+
+		// evtl Invoke mit Delay
+
+		Material tempMaterial = _player1Color;
+		_player1Color = _player2Color;
+		_player2Color = tempMaterial;
+
+		Player1.GetComponent<Renderer>().material = _player1Color;
+		Player2.GetComponent<Renderer>().material = _player2Color;
+
+		//Material tempShadowMaterial = Player1Shadow.GetComponent<Renderer>().material;
+		//Player1Shadow.GetComponent<Renderer>().material = Player2Shadow.GetComponent<Renderer>().material;
+		//Player2Shadow.GetComponent<Renderer>().material = tempShadowMaterial;
+
+		KeyCode tempKeyLeft = player1Script.KeyLeft;
+		KeyCode tempKeyRight = player1Script.KeyRight;
+
+		player1Script.KeyLeft = player2Script.KeyLeft;
+		player1Script.KeyRight = player2Script.KeyRight;
+
+		player2Script.KeyLeft = tempKeyLeft;
+		player2Script.KeyRight = tempKeyRight;
+
+		player1Script.ControlsActive = true;
+		player2Script.ControlsActive = true;
+	}
 }
