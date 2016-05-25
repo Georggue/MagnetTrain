@@ -34,11 +34,11 @@ public class GameManager : MonoBehaviour
     public int Score;
     public int ScoreMultiplier;
     //Variablen für Spielerleben
-    public int playerLife;
+    private int _playerLife;
     //Variablen für Playermovementspeed
     private List<int> movementIncrementMultiplier = new List<int> { 10, 25, 50, 100, 250, 500, 1000 };
-    private List<float> movementIncrementSpeed = new List<float> { 0.3f, 0.35f, 0.4f, 0.45f, 0.5f, 0.6f };
-
+    private List<float> movementIncrementSpeed = new List<float> { 1.2f, 1.4f, 1.6f, 1.8f, 2f, 2.2f };
+    private bool _rewinding = false;
 	// evtl den Wert iwo herbekommen/berechnen
 	public bool ReverseMagnet { get; set; }
 	private float _player2StartPositionY = -0.65f;
@@ -51,9 +51,9 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         Score = 0;
-        playerLife = 3;
+        _playerLife = 3;
         ScoreMultiplier = 1;
-        ScoreText.text = "Score: " + Score.ToString() + " Multiplier: " + ScoreMultiplier.ToString() +"\n Leben: " + playerLife.ToString();
+        ScoreText.text = "Score: " + Score.ToString() + " Multiplier: " + ScoreMultiplier.ToString() +"\n Leben: " + _playerLife.ToString();
     }
 
 	// Update is called once per frame
@@ -62,7 +62,7 @@ public class GameManager : MonoBehaviour
 		CheckPlayerDistance();
 
 		CheckForSpeedUpdate();
-        ScoreText.text = "Score: " + Score.ToString() + " Multiplier: " + ScoreMultiplier.ToString() + "\n Leben: " + playerLife.ToString();
+        ScoreText.text = "Score: " + Score.ToString() + " Multiplier: " + ScoreMultiplier.ToString() + "\n Leben: " + _playerLife.ToString();
     }
 
 	private void CheckPlayerDistance()
@@ -121,7 +121,7 @@ public class GameManager : MonoBehaviour
 
         if (pickupTag == Tags.LifePickup)
         {
-            playerLife = playerLife + 1;
+            _playerLife = _playerLife + 1;
             Score = Score + 10 * ScoreMultiplier;
             ScoreMultiplier = ScoreMultiplier + 1;
             //Debug.Log("LifePickup eingesammelt");
@@ -130,11 +130,11 @@ public class GameManager : MonoBehaviour
 
     internal void TriggerObstacleHit(int playerNumber)
     {
-        playerLife = playerLife - 1;
-        if (playerLife == 0)
+        _playerLife = _playerLife - 1;
+        if (_playerLife == 0)
         {
             //zu debug zwecken
-            playerLife = 1;
+            _playerLife = 1;
             //call GameOver
         }
 
@@ -150,6 +150,7 @@ public class GameManager : MonoBehaviour
 
     private void StartReset()
     {
+      
         Invoke("StopReset", 1);
         SetPlayerControlAndColliderStatus(false);
         LaneManager.Instance.Rewind();
@@ -157,14 +158,18 @@ public class GameManager : MonoBehaviour
 
     private void StopReset()
     {
+       
         SetPlayerControlAndColliderStatus(true);
         LaneManager.Instance.StopRewind();
+        UpdatePlayerSpeeds(1f);
         Score = Score - 10*ScoreMultiplier; //>Score reduzieren, wenn der Spieler mit einem Objekt kollidiert
         ScoreMultiplier = 1; //Score Multiplier reset
     }
 
     private void SetPlayerControlAndColliderStatus(bool playerControlsEnabled)
     {
+        Debug.Log("Rewinding is " + !playerControlsEnabled);
+        _rewinding = !playerControlsEnabled;
         var playerScripts = FindObjectsOfType(typeof(MovePlayer));
         if (!playerControlsEnabled)
         {
@@ -238,28 +243,36 @@ public class GameManager : MonoBehaviour
 
     public void CheckForSpeedUpdate()
     {
+        if (_rewinding)
+        {
+            return;
+        }
         int multiplierindex = - 1;
-
+   
         foreach ( var multiplier in movementIncrementMultiplier)
         {
-            if (multiplier >= ScoreMultiplier)
-            {
-                multiplierindex = movementIncrementMultiplier.IndexOf(multiplier);
-            }
-        }
-        if (multiplierindex != -1)
-        {
-            foreach (var value in movementIncrementSpeed)
-            {
-                if (movementIncrementSpeed.IndexOf(value) == movementIncrementMultiplier.IndexOf(ScoreMultiplier))
+           
+                if (ScoreMultiplier <= multiplier)
                 {
-                    //update Movement Speed
-                    LaneManager.Instance.setSpeed(value);
+                    multiplierindex = movementIncrementMultiplier.IndexOf(multiplier);
+                    break;
                 }
-            }
         }
-	}
+        if (multiplierindex != -1 && multiplierindex > 0)
+        {
+            float factor = movementIncrementSpeed[multiplierindex - 1];
+            LaneManager.Instance.SetSpeedMultiplier(factor);
+            UpdatePlayerSpeeds(factor);
+        }
+    }
 
+    private void UpdatePlayerSpeeds(float factor)
+    {
+        MovePlayer player1Script = (MovePlayer)Player1.GetComponent(typeof(MovePlayer));
+        MovePlayer player2Script = (MovePlayer)Player2.GetComponent(typeof(MovePlayer));
+        player1Script.SetSpeedMultiplier(factor);
+        player2Script.SetSpeedMultiplier(factor);
+    }
 	public void SwitchPlayers()
 	{
 		MovePlayer player1Script = (MovePlayer)Player1.GetComponent(typeof(MovePlayer));
@@ -274,12 +287,12 @@ public class GameManager : MonoBehaviour
 		_player1Color = _player2Color;
 		_player2Color = tempMaterial;
 
-		Player1.GetComponent<Renderer>().material = _player1Color;
+	    Player1.GetComponent<Renderer>().material = _player1Color;
 		Player2.GetComponent<Renderer>().material = _player2Color;
 
-		//Material tempShadowMaterial = Player1Shadow.GetComponent<Renderer>().material;
-		//Player1Shadow.GetComponent<Renderer>().material = Player2Shadow.GetComponent<Renderer>().material;
-		//Player2Shadow.GetComponent<Renderer>().material = tempShadowMaterial;
+
+	    //Player1Shadow.GetComponent<Renderer>().material = _player1Color;
+	    //Player2Shadow.GetComponent<Renderer>().material = _player2Color;
 
 		KeyCode tempKeyLeft = player1Script.KeyLeft;
 		KeyCode tempKeyRight = player1Script.KeyRight;

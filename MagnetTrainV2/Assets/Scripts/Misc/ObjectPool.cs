@@ -9,7 +9,8 @@ public class ObjectPool : MonoBehaviour
         Special,
         Easy,
         Medium,
-        Hard
+        Hard,
+        Empty
     }
 
     public Dictionary<ObjectDifficulty, List<GameObject>> ObjectDictionary
@@ -18,7 +19,7 @@ public class ObjectPool : MonoBehaviour
     }
 
     public static ObjectPool Instance = null;
-
+    public GameObject EmptyLane;
     public List<GameObject> LaneListSpecial;    
     public List<GameObject> LaneListEasy;
     public List<GameObject> LaneListMedium;
@@ -39,6 +40,7 @@ public class ObjectPool : MonoBehaviour
     private void FillDictionary()
     {
         ObjectDictionary = new Dictionary<ObjectDifficulty, List<GameObject>>();
+        CreateSectionList(ObjectDifficulty.Empty, new List<GameObject>() { EmptyLane },InstancesPerPrefab);
         CreateSectionList(ObjectDifficulty.Special, LaneListSpecial, InstancesPerPrefab);
         CreateSectionList(ObjectDifficulty.Easy, LaneListEasy, InstancesPerPrefab);
         CreateSectionList(ObjectDifficulty.Medium, LaneListMedium, InstancesPerPrefab);
@@ -108,7 +110,8 @@ public class ObjectPool : MonoBehaviour
 	        {Tags.Easy, ObjectDifficulty.Easy},
 	        {Tags.Medium, ObjectDifficulty.Medium},
 	        {Tags.Hard, ObjectDifficulty.Hard},
-	        {Tags.Special, ObjectDifficulty.Special}
+	        {Tags.Special, ObjectDifficulty.Special},
+            {Tags.Empty,ObjectDifficulty.Empty }
 	    };
 
 

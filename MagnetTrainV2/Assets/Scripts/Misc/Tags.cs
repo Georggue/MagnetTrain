@@ -8,6 +8,7 @@ public class Tags : MonoBehaviour {
 	public static readonly string Medium = "Medium";
 	public static readonly string Hard = "Hard";
 	public static readonly string Special = "Special";
+    public static readonly string Empty = "Empty";
 
 	public static readonly string Obstacle = "Obstacle";
 

@@ -16,7 +16,6 @@ public class LaneManager : MonoBehaviour {
     private GameObject _player2Shadow = null;
 
     private float MovementSpeed { get; set; }
-
     public float InitialMovementSpeed;
 	public float SpeedIncrease;
 
@@ -66,8 +65,7 @@ public class LaneManager : MonoBehaviour {
         LaneLength = LaneSection.transform.GetChild(0).GetChild(0).localScale.z;
 
 		//place starting lane
-		// TODO: iwann evtl EmptyLane statt Special
-		PlaceNewLane(0f, ObjectPool.ObjectDifficulty.Special);
+		PlaceNewLane(0f, ObjectPool.ObjectDifficulty.Empty);
 
         for (int i = 1; i < ActiveLaneCount ; i++)
         {
@@ -151,7 +149,7 @@ public class LaneManager : MonoBehaviour {
 	private List<GameObject> GetActiveLanes()
 	{
         List<GameObject> activeLanes = new List<GameObject>();
-
+        activeLanes.AddRange(GameObject.FindGameObjectsWithTag(Tags.Empty));
         activeLanes.AddRange(GameObject.FindGameObjectsWithTag(Tags.Easy));
         activeLanes.AddRange(GameObject.FindGameObjectsWithTag(Tags.Medium));
         activeLanes.AddRange(GameObject.FindGameObjectsWithTag(Tags.Hard));
@@ -192,8 +190,7 @@ public class LaneManager : MonoBehaviour {
 		//	Util.instance.SetZ(lane, (i + 1) * LaneLength);
 		//}
 		
-		// TODO: (falls mehrere Streckentypen in Special sind -> nur EmptyLanes nehmen)
-		PlaceNewLane(z, ObjectPool.ObjectDifficulty.Special);
+		PlaceNewLane(z, ObjectPool.ObjectDifficulty.Empty);
 	}
 
     public void StopRewind()
@@ -217,8 +214,9 @@ public class LaneManager : MonoBehaviour {
         MovementSpeed -= SpeedIncrease;
     }
 
-    public void setSpeed(float speed)
+    public void SetSpeedMultiplier(float factor)
     {
-        MovementSpeed = speed;
+        MovementSpeed = InitialMovementSpeed * factor;
+        Debug.Log("Speed is " + MovementSpeed);
     }
 }

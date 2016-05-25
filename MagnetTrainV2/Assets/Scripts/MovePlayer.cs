@@ -9,7 +9,7 @@ public class MovePlayer : MonoBehaviour {
     [Range(1,2)]
     public int PlayerNumber;
     public float HorizontalSpeed;
-
+    private float _initialHorizontalSpeed;
 	private bool _left = false;
 	private bool _right = false;
 
@@ -37,6 +37,7 @@ public class MovePlayer : MonoBehaviour {
 
     void Awake()
     {
+        _initialHorizontalSpeed = HorizontalSpeed;
         ControlsActive = true;
     }
 
@@ -94,6 +95,11 @@ public class MovePlayer : MonoBehaviour {
         {
             coll.enabled = collStatus;
         }
+    }
+
+    public void SetSpeedMultiplier(float factor)
+    {
+        HorizontalSpeed = _initialHorizontalSpeed*factor;
     }
 
 }
