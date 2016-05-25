@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: c90fad3200a39214c894fd1b930a44e7
+timeCreated: 1463079607
+licenseType: Free
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - PlayerPrefab: {fileID: 197512, guid: 8768d044ede19ed49b1f0fb24c5e7c9d, type: 2}
+  - Player2Prefab: {fileID: 113290, guid: d8abde4c68a7478408527a483e63238f, type: 2}
+  - PlayerShadowPrefab: {fileID: 170022, guid: c235ec4042c97b14e94f3322cce102c9, type: 2}
+  - Player2ShadowPrefab: {fileID: 119280, guid: bc75eb422ac988b4eaec9b85e67fa375,
+      type: 2}
+  - LaneSection: {fileID: 185608, guid: 1116abf5b393dae42b242f725cbe1f07, type: 2}
+  executionOrder: 200
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
