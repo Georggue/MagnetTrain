@@ -29,4 +29,10 @@ public class gameOverMenuScript : MonoBehaviour {
     {
         SceneManager.LoadScene("GameScene");
     }
+
+    //wird aufgerufen, wenn auf Scoreboard gedrückt wird
+    public void OpenScoreboard()
+    {
+
+    }
 }
