@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 using System;
 using UnityEngine.UI;
 using System.Collections.Generic;
@@ -133,9 +134,7 @@ public class GameManager : MonoBehaviour
         _playerLife = _playerLife - 1;
         if (_playerLife == 0)
         {
-            //zu debug zwecken
-            _playerLife = 1;
-            //call GameOver
+            SceneManager.LoadScene("GameOverScene");
         }
 
         var position = playerNumber == 1 ? Player1.transform.position : Player2.transform.position;
@@ -274,6 +273,7 @@ public class GameManager : MonoBehaviour
         player1Script.SetSpeedMultiplier(factor);
         player2Script.SetSpeedMultiplier(factor);
     }
+
     public void SwitchPlayers()
     {
         MovePlayer player1Script = (MovePlayer)Player1.GetComponent(typeof(MovePlayer));
