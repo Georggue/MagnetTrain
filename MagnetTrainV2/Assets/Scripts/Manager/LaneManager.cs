@@ -59,8 +59,9 @@ public class LaneManager : MonoBehaviour {
         //Reference the player. you can get him now from everywhere by using the Util Class
         GameManager.Instance.Player1 = _player;
         GameManager.Instance.Player2 = _player2;
-   
-		ResetSpeed();
+	    GameManager.Instance.Player1Shadow = _playerShadow;
+        GameManager.Instance.Player2Shadow = _player2Shadow;
+        ResetSpeed();
 		
         LaneLength = LaneSection.transform.GetChild(0).GetChild(0).localScale.z;
 
@@ -129,6 +130,10 @@ public class LaneManager : MonoBehaviour {
 		{
 			lane.transform.position = new Vector3(0, 0, z);
 			lane.SetActive(true);
+            foreach (Transform child in lane.transform)
+            {
+               child.gameObject.SetActive(true);
+            }
 		}
 		else
 		{

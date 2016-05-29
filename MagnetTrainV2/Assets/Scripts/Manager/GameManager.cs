@@ -7,27 +7,27 @@ using System.Collections.Generic;
 public class GameManager : MonoBehaviour
 {
 
-	private enum GravityState
-	{
-		PullSlow,
-		PullFast,
-		FallSlow,
-		FallMedium,
-		FallFast
-	}
+    private enum GravityState
+    {
+        PullSlow,
+        PullFast,
+        FallSlow,
+        FallMedium,
+        FallFast
+    }
 
-	public static GameManager Instance = null;
+    public static GameManager Instance = null;
 
-	public GameObject Player1;
+    public GameObject Player1;
     public GameObject Player2;
     public GameObject Player1Shadow;
     public GameObject Player2Shadow;
     public GameObject ObstacleHitEffect;
 
-	public float DistanceThreshold; // std: 3.0
-	public float UpFactor; // std: 0.1
-	public float DownFactor; // std: -0.15
-	public float MaximumYValue; // std: -8.0
+    public float DistanceThreshold; // std: 3.0
+    public float UpFactor; // std: 0.1
+    public float DownFactor; // std: -0.15
+    public float MaximumYValue; // std: -8.0
 
     //Variablen für Score
     public Text ScoreText;
@@ -39,13 +39,13 @@ public class GameManager : MonoBehaviour
     private List<int> movementIncrementMultiplier = new List<int> { 10, 25, 50, 100, 250, 500, 1000 };
     private List<float> movementIncrementSpeed = new List<float> { 1.2f, 1.4f, 1.6f, 1.8f, 2f, 2.2f };
     private bool _rewinding = false;
-	// evtl den Wert iwo herbekommen/berechnen
-	public bool ReverseMagnet { get; set; }
-	private float _player2StartPositionY = -0.65f;
+    // evtl den Wert iwo herbekommen/berechnen
+    public bool ReverseMagnet { get; set; }
+    private float _player2StartPositionY = -0.65f;
 
     private Material _player1Color;
     private Material _player2Color;
-   
+
 
     // Use this for initialization
     void Start()
@@ -53,62 +53,62 @@ public class GameManager : MonoBehaviour
         Score = 0;
         _playerLife = 3;
         ScoreMultiplier = 1;
-        ScoreText.text = "Score: " + Score.ToString() + " Multiplier: " + ScoreMultiplier.ToString() +"\n Leben: " + _playerLife.ToString();
-    }
-
-	// Update is called once per frame
-	void Update()
-    {
-		CheckPlayerDistance();
-
-		CheckForSpeedUpdate();
         ScoreText.text = "Score: " + Score.ToString() + " Multiplier: " + ScoreMultiplier.ToString() + "\n Leben: " + _playerLife.ToString();
     }
 
-	private void CheckPlayerDistance()
-	{
-		var distance = Player1.transform.localPosition.x - Player2.transform.localPosition.x;
-		distance = Mathf.Abs(distance);
+    // Update is called once per frame
+    void Update()
+    {
+        CheckPlayerDistance();
 
-		float velocity = 0;
+        CheckForSpeedUpdate();
+        ScoreText.text = "Score: " + Score.ToString() + " Multiplier: " + ScoreMultiplier.ToString() + "\n Leben: " + _playerLife.ToString();
+    }
 
-		// TODO: evtl iwo LaneWidth herbekommen
-		const float maxDistance = 10f;
+    private void CheckPlayerDistance()
+    {
+        var distance = Player1.transform.localPosition.x - Player2.transform.localPosition.x;
+        distance = Mathf.Abs(distance);
 
-		if (distance < DistanceThreshold)
-		{
-			velocity = (1 - (distance / DistanceThreshold)) * UpFactor;
-		}
-		else
-		{
-			velocity = ((distance - DistanceThreshold) / (maxDistance - DistanceThreshold)) * DownFactor;
-		}
+        float velocity = 0;
 
-		if (ReverseMagnet) velocity *= -1;
+        // TODO: evtl iwo LaneWidth herbekommen
+        const float maxDistance = 10f;
 
-		if (velocity < 0 || Player2.transform.localPosition.y < _player2StartPositionY)
-		{
-			Util.Instance.MoveY(Player2, velocity);
-		}
+        if (distance < DistanceThreshold)
+        {
+            velocity = (1 - (distance / DistanceThreshold)) * UpFactor;
+        }
+        else
+        {
+            velocity = ((distance - DistanceThreshold) / (maxDistance - DistanceThreshold)) * DownFactor;
+        }
 
-		if (Player2.transform.localPosition.y < MaximumYValue)
-		{
-			ResetPlayers();
+        if (ReverseMagnet) velocity *= -1;
 
-			Util.Instance.SetY(Player2, _player2StartPositionY);
-		}
-	}
+        if (velocity < 0 || Player2.transform.localPosition.y < _player2StartPositionY)
+        {
+            Util.Instance.MoveY(Player2, velocity);
+        }
 
-	void Awake()
-	{
-		Instance = this;
+        if (Player2.transform.localPosition.y < MaximumYValue)
+        {
+            ResetPlayers();
+
+            Util.Instance.SetY(Player2, _player2StartPositionY);
+        }
+    }
+
+    void Awake()
+    {
+        Instance = this;
         Invoke("SetPlayerMaterials", 0.25f);
     }
 
     public void SetPlayerMaterials()
     {
-        _player1Color = Player1.GetComponent<Renderer>().material;
-        _player2Color = Player2.GetComponent<Renderer>().material;
+        _player1Color = Player1.GetComponent<Renderer>().materials[0];
+        _player2Color = Player2.GetComponent<Renderer>().materials[0];
     }
 
     internal void TriggerPickupHit(string pickupTag)
@@ -150,7 +150,7 @@ public class GameManager : MonoBehaviour
 
     private void StartReset()
     {
-      
+
         Invoke("StopReset", 1);
         SetPlayerControlAndColliderStatus(false);
         LaneManager.Instance.Rewind();
@@ -158,11 +158,11 @@ public class GameManager : MonoBehaviour
 
     private void StopReset()
     {
-       
+
         SetPlayerControlAndColliderStatus(true);
         LaneManager.Instance.StopRewind();
         UpdatePlayerSpeeds(1f);
-        Score = Score - 10*ScoreMultiplier; //>Score reduzieren, wenn der Spieler mit einem Objekt kollidiert
+        Score = Score - 10 * ScoreMultiplier; //>Score reduzieren, wenn der Spieler mit einem Objekt kollidiert
         ScoreMultiplier = 1; //Score Multiplier reset
     }
 
@@ -179,10 +179,10 @@ public class GameManager : MonoBehaviour
                 _player2Color.color.b, 0.1f);
             Vector3 startPosition1 = Player1.transform.position;
             Vector3 startPosition2 = Player2.transform.position;
-            Vector3 endPosition1 = new Vector3(0f, 0.65f,-10f);
+            Vector3 endPosition1 = new Vector3(0f, 0.65f, -10f);
             Vector3 endPosition2 = new Vector3(0f, -0.65f, -10f);
             StartCoroutine(MoveObject(Player1, startPosition1, endPosition1, 1f));
-            StartCoroutine(MoveObject(Player2, startPosition2, endPosition2, 1f));         
+            StartCoroutine(MoveObject(Player2, startPosition2, endPosition2, 1f));
 
         }
         else
@@ -192,7 +192,7 @@ public class GameManager : MonoBehaviour
             Player2.GetComponent<Renderer>().material.color = new Color(_player2Color.color.r, _player2Color.color.g,
                 _player2Color.color.b, 1f);
         }
-      
+
         foreach (var item in playerScripts)
         {
             var movePlayer1 = item as MovePlayer;
@@ -201,13 +201,14 @@ public class GameManager : MonoBehaviour
             {
                 movePlayer1.ControlsActive = playerControlsEnabled;
                 movePlayer1.SetColliderStatus(playerControlsEnabled);
-            }         
+            }
         }
+        GameManager.Instance.ReverseMagnet = false;
     }
 
     private IEnumerator MoveObject(GameObject gameObj, Vector3 startPos, Vector3 endPos, float time)
     {
-      
+
         float i = 0.0f;
         float rate = 1.0f / time;
         while (i < 1.0)
@@ -247,16 +248,16 @@ public class GameManager : MonoBehaviour
         {
             return;
         }
-        int multiplierindex = - 1;
-   
-        foreach ( var multiplier in movementIncrementMultiplier)
+        int multiplierindex = -1;
+
+        foreach (var multiplier in movementIncrementMultiplier)
         {
-           
-                if (ScoreMultiplier <= multiplier)
-                {
-                    multiplierindex = movementIncrementMultiplier.IndexOf(multiplier);
-                    break;
-                }
+
+            if (ScoreMultiplier <= multiplier)
+            {
+                multiplierindex = movementIncrementMultiplier.IndexOf(multiplier);
+                break;
+            }
         }
         if (multiplierindex != -1 && multiplierindex > 0)
         {
@@ -273,37 +274,37 @@ public class GameManager : MonoBehaviour
         player1Script.SetSpeedMultiplier(factor);
         player2Script.SetSpeedMultiplier(factor);
     }
-	public void SwitchPlayers()
-	{
-		MovePlayer player1Script = (MovePlayer)Player1.GetComponent(typeof(MovePlayer));
-		MovePlayer player2Script = (MovePlayer)Player2.GetComponent(typeof(MovePlayer));
+    public void SwitchPlayers()
+    {
+        MovePlayer player1Script = (MovePlayer)Player1.GetComponent(typeof(MovePlayer));
+        MovePlayer player2Script = (MovePlayer)Player2.GetComponent(typeof(MovePlayer));
 
-		player1Script.ControlsActive = false;
-		player2Script.ControlsActive = false;
+        player1Script.ControlsActive = false;
+        player2Script.ControlsActive = false;
 
-		// evtl Invoke mit Delay
+        // evtl Invoke mit Delay
 
-		Material tempMaterial = _player1Color;
-		_player1Color = _player2Color;
-		_player2Color = tempMaterial;
+        Material tempMaterial = _player1Color;
+        _player1Color = _player2Color;
+        _player2Color = tempMaterial;
 
-	    Player1.GetComponent<Renderer>().material = _player1Color;
-		Player2.GetComponent<Renderer>().material = _player2Color;
+        Player1.GetComponent<Renderer>().material = _player1Color;
+        Player2.GetComponent<Renderer>().material = _player2Color;
 
 
-	    //Player1Shadow.GetComponent<Renderer>().material = _player1Color;
-	    //Player2Shadow.GetComponent<Renderer>().material = _player2Color;
+        Player1Shadow.GetComponent<Renderer>().material = _player1Color;
+        Player2Shadow.GetComponent<Renderer>().material = _player2Color;
 
-		KeyCode tempKeyLeft = player1Script.KeyLeft;
-		KeyCode tempKeyRight = player1Script.KeyRight;
+        KeyCode tempKeyLeft = player1Script.KeyLeft;
+        KeyCode tempKeyRight = player1Script.KeyRight;
 
-		player1Script.KeyLeft = player2Script.KeyLeft;
-		player1Script.KeyRight = player2Script.KeyRight;
+        player1Script.KeyLeft = player2Script.KeyLeft;
+        player1Script.KeyRight = player2Script.KeyRight;
 
-		player2Script.KeyLeft = tempKeyLeft;
-		player2Script.KeyRight = tempKeyRight;
+        player2Script.KeyLeft = tempKeyLeft;
+        player2Script.KeyRight = tempKeyRight;
 
-		player1Script.ControlsActive = true;
-		player2Script.ControlsActive = true;
-	}
+        player1Script.ControlsActive = true;
+        player2Script.ControlsActive = true;
+    }
 }
