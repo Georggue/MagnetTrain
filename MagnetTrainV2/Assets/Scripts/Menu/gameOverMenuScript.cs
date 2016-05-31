@@ -69,20 +69,12 @@ public class gameOverMenuScript : MonoBehaviour {
     public Canvas scoreboardMenu;
     public Canvas gameOverMenu;
 
-    public Text scoreText1;
-    public Text scoreText2;
-    public Text scoreText3;
-    public Text scoreText4;
-    public Text scoreText5;
-    public Text scoreText6;
-    public Text scoreText7;
-    public Text scoreText8;
-    public Text scoreText9;
-    public Text scoreText10;
-
     public Text[] scoreTexte = new Text[10];
+    public Text newHighscoreText;
+    public Text playersThatSetTheHighscoreText;
 
-
+    public Text p1name;
+    public Text p2name;
 
     // Use this for initialization
     void Start () {
@@ -94,27 +86,19 @@ public class gameOverMenuScript : MonoBehaviour {
         exitGame = exitGame.GetComponent<Button>();
         scoreboardMenu = scoreboardMenu.GetComponent<Canvas>();
         gameOverMenu = gameOverMenu.GetComponent<Canvas>();
-        scoreTexte[0] = scoreText1;
-        scoreTexte[1] = scoreText2;
-        scoreTexte[2] = scoreText3;
-        scoreTexte[3] = scoreText4;
-        scoreTexte[4] = scoreText5;
-        scoreTexte[5] = scoreText6;
-        scoreTexte[6] = scoreText7;
-        scoreTexte[7] = scoreText8;
-        scoreTexte[8] = scoreText9;
-        scoreTexte[9] = scoreText10;
-
-
-
+        newHighscoreText.enabled = false;
         scoreboardMenu.enabled = false;
+        playersThatSetTheHighscoreText.enabled = false;
         score = GameManager.Instance.Score;
-        scoreText.text = score.ToString();
+        scoreText.text = "SCORE: "+score.ToString();
 
         //prüfen ob bereits 10 scores vorhanden sind
         if (!checkFor10Scores())
         {
             WriteFile();
+            newHighscoreText.enabled = true;
+            playersThatSetTheHighscoreText.enabled = true;
+            playersThatSetTheHighscoreText.text = "SET BY " + player1name + " & " + player2name;
         }
         else
         {
@@ -122,6 +106,9 @@ public class gameOverMenuScript : MonoBehaviour {
             if( checkForTop10() ){
                 Debug.Log("Write for top10");
                 WriteForTop10();
+                newHighscoreText.enabled = true;
+                playersThatSetTheHighscoreText.enabled = true;
+                playersThatSetTheHighscoreText.text = "SET BY " + player1name + " & " + player2name;
             }
         
         }
@@ -251,6 +238,13 @@ public class gameOverMenuScript : MonoBehaviour {
     {
         scoreboardMenu.enabled = false;
         gameOverMenu.enabled = true;
+    }
+
+    //wird aufgerufen, wenn der Button Confirm gedrückt wird nachdem die Spielernamen eingetragen wurden im PopUp das erscheint wenn ein Neuer Highscore erreicht wurde
+    public void confirmPlayerNames()
+    {
+        player1name = p1name.text;
+        player2name = p2name.text;
     }
 
     //called when displaying the scoreboard
