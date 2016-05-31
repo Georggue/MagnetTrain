@@ -70,6 +70,7 @@ public class gameOverMenuScript : MonoBehaviour {
         {
             //prüfen ob highscore in den top 10, wenn ja eintragen
             if( checkForTop10() ){
+                Debug.Log("Write for top10");
                 WriteForTop10();
             }
         
@@ -79,18 +80,17 @@ public class gameOverMenuScript : MonoBehaviour {
     //prüft ob der aktuelle score in den top10 ist
     private bool checkForTop10()
     {
+        Debug.Log("CheckForTop 10 called");
         //hole alle Lines und schreibe sie in die Liste
         var sr = File.OpenText(fileName);
         var line = sr.ReadLine();
         top10.Add(generateScoreLine(line));
-        generateScoreLine(line);
 
         while (line != null)
         {
             line = sr.ReadLine();
             top10.Add(generateScoreLine(line));
         }
-
         //gehe nun alle Scores in der Liste durch und checke ob es Scores gibt die kleiner deinem aktuellen sind
         foreach (scoreline sl in top10)
         {
@@ -128,7 +128,7 @@ public class gameOverMenuScript : MonoBehaviour {
         var sr2 = File.AppendText(fileName);
         foreach ( scoreline sl in top10)
         {
-            sr2.WriteLine(sl.player1name + "," + sl.player2name + "," + sl.score);
+            sr2.WriteLine(sl.player1name + "," + sl.player2name + "," + sl.score + ",");
         }
         sr.Close();
         top10 = new List<scoreline>();
@@ -199,13 +199,13 @@ public class gameOverMenuScript : MonoBehaviour {
         if (!File.Exists(fileName))
         {
             var sr = File.CreateText(fileName);
-            sr.WriteLine(player1name + "," + player2name + "," + score);
+            sr.WriteLine(player1name + "," + player2name + "," + score + ",");
             sr.Close();
         }
         else
         {
             var sr = File.AppendText(fileName);
-            sr.WriteLine(player1name+","+player2name+","+score);
+            sr.WriteLine(player1name+","+player2name+","+score+",");
             sr.Close();
         }
     }
@@ -213,8 +213,9 @@ public class gameOverMenuScript : MonoBehaviour {
     //Generates a scoreline from the string
     public scoreline generateScoreLine(String line)
     {
-        List<string> currentLine = new List<string>();
+        String[] currentLine = new string[3];
         string s = "";
+        int count = 0;
 
         foreach (char c in line)
         {
@@ -225,12 +226,14 @@ public class gameOverMenuScript : MonoBehaviour {
             else
             {
                 Debug.Log(s);
-                currentLine.Add(s);
+                currentLine[count] = s;
                 Debug.Log("s:" + s);
                 s = "";
+                count = count + 1;
             }
         }
-        scoreline sl = new scoreline(currentLine[1], currentLine[2], currentLine[3]);
+        Debug.Log("Error is here");
+        scoreline sl = new scoreline(currentLine[0], currentLine[1], currentLine[2]);
         return sl;
     }
 }
