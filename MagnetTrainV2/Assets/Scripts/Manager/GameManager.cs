@@ -131,19 +131,24 @@ public class GameManager : MonoBehaviour
 
     internal void TriggerObstacleHit(int playerNumber)
     {
-        _playerLife = _playerLife - 1;
-        if (_playerLife == 0)
-        {
-            SceneManager.LoadScene("GameOverScene");
-        }
+        
 
         var position = playerNumber == 1 ? Player1.transform.position : Player2.transform.position;
         Instantiate(ObstacleHitEffect, position, ObstacleHitEffect.transform.rotation);
         ResetPlayers();
     }
 
+    void DecreasePlayerLife()
+    {
+        _playerLife = _playerLife - 1;
+        if (_playerLife == 0)
+        {
+            SceneManager.LoadScene("GameOverScene");
+        }
+    }
     private void ResetPlayers()
     {
+        DecreasePlayerLife();
         StartReset();
     }
 

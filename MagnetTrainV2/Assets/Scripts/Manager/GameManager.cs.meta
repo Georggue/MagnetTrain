@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 54c95297c3c3c7647940450310641dd7
-timeCreated: 1463079586
+timeCreated: 1464679351
 licenseType: Free
 MonoImporter:
   serializedVersion: 2
@@ -9,6 +9,7 @@ MonoImporter:
   - Player2: {fileID: 113290, guid: d8abde4c68a7478408527a483e63238f, type: 2}
   - Player1Shadow: {fileID: 170022, guid: c235ec4042c97b14e94f3322cce102c9, type: 2}
   - Player2Shadow: {fileID: 119280, guid: bc75eb422ac988b4eaec9b85e67fa375, type: 2}
+  - ObstacleHitEffect: {fileID: 109928, guid: 78d2e50d38004cf4b8f62c9b3609c160, type: 2}
   - ScoreText: {fileID: 11485626, guid: c7e035f931e93234f930e5b482591920, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
