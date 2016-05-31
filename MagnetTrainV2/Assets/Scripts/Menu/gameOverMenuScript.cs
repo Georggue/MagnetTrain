@@ -8,30 +8,47 @@ using System.Collections.Generic;
 
 public class scoreline
 {
-    public string player1name
-    {
-        get { return player1name; }
-        set { player1name = value; }
-    }
+    private string player1name;
+    private string player2name;
+    private int score;
 
-    public string player2name
-    {
-        get { return player2name; }
-        set { player2name = value; }
-    }
-
-    public string score
-    {
-        get { return score; }
-        set { score = value; }
-    }
-
-    public scoreline(string Player1,string Player2,string sc)
+    public scoreline(string Player1,string Player2,int sc)
     {
         player1name = Player1;
         player2name = Player2;
         score = sc;        
     }
+
+    public string getP1()
+    {
+        return player1name;
+    }
+
+    public string getP2()
+    {
+        return player2name;
+    }
+
+    public int getScore()
+    {
+        return score;
+    }
+
+    public void setP1(string p1)
+    {
+        player1name = p1;
+    }
+
+    public void setP2(string p2)
+    {
+        player2name = p2;
+    }
+
+    public void setScore(int s )
+    {
+        score = s;
+    }
+
 }
 
 public class gameOverMenuScript : MonoBehaviour {
@@ -49,15 +66,48 @@ public class gameOverMenuScript : MonoBehaviour {
 
     private List<scoreline> top10;
 
+    public Canvas scoreboardMenu;
+    public Canvas gameOverMenu;
+
+    public Text scoreText1;
+    public Text scoreText2;
+    public Text scoreText3;
+    public Text scoreText4;
+    public Text scoreText5;
+    public Text scoreText6;
+    public Text scoreText7;
+    public Text scoreText8;
+    public Text scoreText9;
+    public Text scoreText10;
+
+    public Text[] scoreTexte = new Text[10];
+
+
 
     // Use this for initialization
     void Start () {
         //Test
         player1name = "p1";
         player2name = "p2";
-        //Test
+        //Test ENDE
         playAgain = playAgain.GetComponent<Button>();
         exitGame = exitGame.GetComponent<Button>();
+        scoreboardMenu = scoreboardMenu.GetComponent<Canvas>();
+        gameOverMenu = gameOverMenu.GetComponent<Canvas>();
+        scoreTexte[0] = scoreText1;
+        scoreTexte[1] = scoreText2;
+        scoreTexte[2] = scoreText3;
+        scoreTexte[3] = scoreText4;
+        scoreTexte[4] = scoreText5;
+        scoreTexte[5] = scoreText6;
+        scoreTexte[6] = scoreText7;
+        scoreTexte[7] = scoreText8;
+        scoreTexte[8] = scoreText9;
+        scoreTexte[9] = scoreText10;
+
+
+
+        scoreboardMenu.enabled = false;
         score = GameManager.Instance.Score;
         scoreText.text = score.ToString();
 
@@ -66,7 +116,7 @@ public class gameOverMenuScript : MonoBehaviour {
         {
             WriteFile();
         }
-        /*else
+        else
         {
             //prüfen ob highscore in den top 10, wenn ja eintragen
             if( checkForTop10() ){
@@ -74,7 +124,7 @@ public class gameOverMenuScript : MonoBehaviour {
                 WriteForTop10();
             }
         
-        }*/
+        }
     }
 
     //prüft ob der aktuelle score in den top10 ist
@@ -94,7 +144,7 @@ public class gameOverMenuScript : MonoBehaviour {
         //gehe nun alle Scores in der Liste durch und checke ob es Scores gibt die kleiner deinem aktuellen sind
         foreach (scoreline sl in top10)
         {
-            if (Int32.Parse(sl.score) < score)
+            if (sl.getScore() < score)
             {
                 return true;
             }
@@ -109,9 +159,9 @@ public class gameOverMenuScript : MonoBehaviour {
         int zwischenscore=999999;
         foreach (scoreline sl in top10)
         {
-            if(Int32.Parse(sl.score) < score && Int32.Parse(sl.score) < zwischenscore)
+            if(sl.getScore() < score && sl.getScore() < zwischenscore)
             {
-                zwischenscore = Int32.Parse(sl.score);
+                zwischenscore = sl.getScore();
                 pos = top10.IndexOf(sl);
             }
         }
@@ -120,7 +170,7 @@ public class gameOverMenuScript : MonoBehaviour {
         {
             top10.RemoveAt(pos);
         }
-        top10.Add(new scoreline(player1name,player2name,score.ToString()));
+        top10.Add(new scoreline(player1name,player2name,score));
 
         //schreibe nun die neuen scores in die File
         top10.Sort();
@@ -128,7 +178,7 @@ public class gameOverMenuScript : MonoBehaviour {
         var sr2 = File.AppendText(fileName);
         foreach ( scoreline sl in top10)
         {
-            sr2.WriteLine(sl.player1name + "," + sl.player2name + "," + sl.score + ",");
+            sr2.WriteLine(sl.getP1() + "," + sl.getP2() + "," + sl.getScore() + ",");
         }
         sr.Close();
         top10 = new List<scoreline>();
@@ -170,10 +220,37 @@ public class gameOverMenuScript : MonoBehaviour {
         SceneManager.LoadScene("GameScene");
     }
 
-    //wird aufgerufen, wenn auf Scoreboard gedrückt wird
+    //wird aufgerufen, wenn auf Scoreboard gedrückt wird, lädt die Scores in die TextFelder
     public void OpenScoreboard()
     {
+        scoreboardMenu.enabled = true;
+        gameOverMenu.enabled = false;
+        var sr = File.OpenText(fileName);
 
+        int count;
+        if (File.Exists(fileName))
+        {
+            count = File.ReadAllLines(fileName).Length;
+        }
+        else
+        {
+            count = 0;
+        }
+
+        if(count != 0)
+        {
+            for(int i = 0; i <= count-1; i++)
+            {
+                scoreTexte[i].text = sr.ReadLine(); ;
+            }
+        }
+    }
+
+    //wird aufgerufen, wenn der Return Button im Scoreboard gedrückt wird
+    public void PressReturn()
+    {
+        scoreboardMenu.enabled = false;
+        gameOverMenu.enabled = true;
     }
 
     //called when displaying the scoreboard
@@ -233,7 +310,8 @@ public class gameOverMenuScript : MonoBehaviour {
             }
         }
         Debug.Log("Error is here");
-        scoreline sl = new scoreline(currentLine[0], currentLine[1], currentLine[2]);
+        Debug.Log("0: " + currentLine[0]  + " 1: " + currentLine[1] + " 2: " + currentLine[2]);
+        scoreline sl = new scoreline(currentLine[0], currentLine[1], Int32.Parse(currentLine[2]));
         return sl;
     }
 }
