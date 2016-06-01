@@ -53,13 +53,14 @@ public class scoreline
 
 public class gameOverMenuScript : MonoBehaviour {
 
-    public Button playAgain;
-    public Button exitGame;
-    public Text scoreText;
-
     private int score;
     private string player1name;
     private string player2name;
+    private bool top10Entriesfull;
+
+    public Button playAgain;
+    public Button exitGame;
+    public Text scoreText;
 
     private string fileName = "scoreboard.txt";
 
@@ -74,6 +75,7 @@ public class gameOverMenuScript : MonoBehaviour {
 
     public Text p1name;
     public Text p2name;
+    public Canvas highscorePlayerNamesPopUp;
 
     // Use this for initialization
     void Start () {
@@ -85,32 +87,32 @@ public class gameOverMenuScript : MonoBehaviour {
         exitGame = exitGame.GetComponent<Button>();
         scoreboardMenu = scoreboardMenu.GetComponent<Canvas>();
         gameOverMenu = gameOverMenu.GetComponent<Canvas>();
+        highscorePlayerNamesPopUp = highscorePlayerNamesPopUp.GetComponent<Canvas>();
         newHighscoreText.enabled = false;
         scoreboardMenu.enabled = false;
         playersThatSetTheHighscoreText.enabled = false;
+        highscorePlayerNamesPopUp.enabled = false;
         score = GameManager.Instance.Score;
         scoreText.text = "SCORE: "+score.ToString();
 
         //prüfen ob bereits 10 scores vorhanden sind
         if (!checkFor10Scores())
         {
-            WriteFile();
             newHighscoreText.enabled = true;
-            playersThatSetTheHighscoreText.enabled = true;
-            playersThatSetTheHighscoreText.text = "SET BY " + player1name + " & " + player2name;
+            highscorePlayerNamesPopUp.enabled = true;
+            top10Entriesfull = false;
         }
-        /*else
+        else
         {
             //prüfen ob highscore in den top 10, wenn ja eintragen
             if( checkForTop10() ){
-                Debug.Log("Write for top10");
-                WriteForTop10();
                 newHighscoreText.enabled = true;
-                playersThatSetTheHighscoreText.enabled = true;
-                playersThatSetTheHighscoreText.text = "SET BY " + player1name + " & " + player2name;
+                highscorePlayerNamesPopUp.enabled = true;
+                top10Entriesfull = true;
+                //Debug.Log("Write for top10");
             }
         
-        }*/
+        }
     }
 
     //prüft ob der aktuelle score in den top10 ist
@@ -244,6 +246,17 @@ public class gameOverMenuScript : MonoBehaviour {
     {
         player1name = p1name.text;
         player2name = p2name.text;
+        playersThatSetTheHighscoreText.enabled = true;
+        playersThatSetTheHighscoreText.text = "SET BY " + player1name + " & " + player2name;
+        if (top10Entriesfull)
+        {
+            WriteForTop10();
+        }
+        else
+        {
+            WriteFile();
+        }
+        highscorePlayerNamesPopUp.enabled = false;
     }
 
     //called when displaying the scoreboard
