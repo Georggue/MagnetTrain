@@ -37,8 +37,8 @@ public class GameManager : MonoBehaviour
     //Variablen für Spielerleben
     private int _playerLife;
     //Variablen für Playermovementspeed
-    private List<int> movementIncrementMultiplier = new List<int> { 10, 25, 50, 100, 250, 500, 1000 };
-    private List<float> movementIncrementSpeed = new List<float> { 1.2f, 1.4f, 1.6f, 1.8f, 2f, 2.2f };
+    private List<int> movementIncrementMultiplier = new List<int> { 10, 15, 20, 30, 40, 80, 100 };
+    private List<float> movementIncrementSpeed = new List<float> { 1.4f, 1.6f, 1.7f, 1.8f, 1.9f, 2.2f };
     private bool _rewinding = false;
     // evtl den Wert iwo herbekommen/berechnen
     public bool ReverseMagnet { get; set; }
