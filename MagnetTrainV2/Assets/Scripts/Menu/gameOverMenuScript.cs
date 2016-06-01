@@ -62,9 +62,8 @@ public class gameOverMenuScript : MonoBehaviour {
     private string player2name;
 
     private string fileName = "scoreboard.txt";
-    private int position; //Position wo der neue Score platziert wird
 
-    private List<scoreline> top10;
+    private List<scoreline> top10 = new List<scoreline>();
 
     public Canvas scoreboardMenu;
     public Canvas gameOverMenu;
@@ -100,7 +99,7 @@ public class gameOverMenuScript : MonoBehaviour {
             playersThatSetTheHighscoreText.enabled = true;
             playersThatSetTheHighscoreText.text = "SET BY " + player1name + " & " + player2name;
         }
-        else
+        /*else
         {
             //prüfen ob highscore in den top 10, wenn ja eintragen
             if( checkForTop10() ){
@@ -111,22 +110,21 @@ public class gameOverMenuScript : MonoBehaviour {
                 playersThatSetTheHighscoreText.text = "SET BY " + player1name + " & " + player2name;
             }
         
-        }
+        }*/
     }
 
     //prüft ob der aktuelle score in den top10 ist
     private bool checkForTop10()
     {
-        Debug.Log("CheckForTop 10 called");
+        //Debug.Log("CheckForTop 10 called");
         //hole alle Lines und schreibe sie in die Liste
         var sr = File.OpenText(fileName);
         var line = sr.ReadLine();
-        top10.Add(generateScoreLine(line));
 
         while (line != null)
         {
-            line = sr.ReadLine();
             top10.Add(generateScoreLine(line));
+            line = sr.ReadLine();
         }
         //gehe nun alle Scores in der Liste durch und checke ob es Scores gibt die kleiner deinem aktuellen sind
         foreach (scoreline sl in top10)
@@ -158,24 +156,25 @@ public class gameOverMenuScript : MonoBehaviour {
             top10.RemoveAt(pos);
         }
         top10.Add(new scoreline(player1name,player2name,score));
-
+        sr.Close();
         //schreibe nun die neuen scores in die File
-        top10.Sort();
-        File.WriteAllText(fileName, string.Empty);
+        //top10.Sort();         //geht erst wenn es eine CompareTo Methode in scoreline gibt
+        File.WriteAllText(fileName, string.Empty);   //<- hier ist der fehler
         var sr2 = File.AppendText(fileName);
         foreach ( scoreline sl in top10)
         {
             sr2.WriteLine(sl.getP1() + "," + sl.getP2() + "," + sl.getScore() + ",");
         }
-        sr.Close();
+
         top10 = new List<scoreline>();
+        sr2.Close();
     }
 
     //called when the game is over to check if the scoreboard file already has 10 score, if it has less than 10 the score is automatically added
     public bool checkFor10Scores()
     {
         int count;
-        Debug.Log("Called checkFor10Scores()");
+        //Debug.Log("Called checkFor10Scores()");
         if (File.Exists(fileName))
         {
             count = File.ReadAllLines(fileName).Length;
@@ -249,7 +248,7 @@ public class gameOverMenuScript : MonoBehaviour {
 
     //called when displaying the scoreboard
     public void ReadFile(String file) {
-
+        //Debug.Log("Called Read File");
         if (File.Exists(file)) {
             var sr = File.OpenText(file);
             var line = sr.ReadLine();
@@ -266,7 +265,7 @@ public class gameOverMenuScript : MonoBehaviour {
     //called when writing a new score to the scorefile
     public void WriteFile()
     {
-        Debug.Log("Called WriteFile()");
+        //Debug.Log("Called WriteFile()");
         if (!File.Exists(fileName))
         {
             var sr = File.CreateText(fileName);
@@ -298,13 +297,10 @@ public class gameOverMenuScript : MonoBehaviour {
             {
                 Debug.Log(s);
                 currentLine[count] = s;
-                Debug.Log("s:" + s);
                 s = "";
                 count = count + 1;
             }
         }
-        Debug.Log("Error is here");
-        Debug.Log("0: " + currentLine[0]  + " 1: " + currentLine[1] + " 2: " + currentLine[2]);
         scoreline sl = new scoreline(currentLine[0], currentLine[1], Int32.Parse(currentLine[2]));
         return sl;
     }
