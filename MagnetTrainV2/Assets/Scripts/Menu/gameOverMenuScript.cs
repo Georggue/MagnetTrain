@@ -93,6 +93,7 @@ public class gameOverMenuScript : MonoBehaviour {
         playersThatSetTheHighscoreText.enabled = false;
         highscorePlayerNamesPopUp.enabled = false;
         score = GameManager.Instance.Score;
+        scoreText.enabled = false;
         scoreText.text = "SCORE: "+score.ToString();
 
         //prüfen ob bereits 10 scores vorhanden sind
@@ -110,6 +111,10 @@ public class gameOverMenuScript : MonoBehaviour {
                 highscorePlayerNamesPopUp.enabled = true;
                 top10Entriesfull = true;
                 //Debug.Log("Write for top10");
+            }
+            else
+            {
+                scoreText.enabled = true;
             }
         
         }
@@ -229,7 +234,7 @@ public class gameOverMenuScript : MonoBehaviour {
         {
             for(int i = 0; i <= count-1; i++)
             {
-                scoreTexte[i].text = sr.ReadLine(); ;
+                scoreTexte[i].text = i+1 + ": " + sr.ReadLine(); ;
             }
         }
     }
@@ -251,10 +256,12 @@ public class gameOverMenuScript : MonoBehaviour {
         if (top10Entriesfull)
         {
             WriteForTop10();
+            scoreText.enabled = true;
         }
         else
         {
             WriteFile();
+            scoreText.enabled = true;
         }
         highscorePlayerNamesPopUp.enabled = false;
     }
