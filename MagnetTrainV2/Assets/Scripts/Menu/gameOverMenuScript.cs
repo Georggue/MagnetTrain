@@ -6,7 +6,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 
-public class scoreline
+public class scoreline : IComparable
 {
     private string player1name;
     private string player2name;
@@ -47,6 +47,17 @@ public class scoreline
     public void setScore(int s )
     {
         score = s;
+    }
+
+    public int CompareTo(object obj)
+    {
+        if (obj == null) return 1;
+
+        scoreline otherScoreLine = obj as scoreline;
+        if (otherScoreLine != null)
+            return this.score.CompareTo(otherScoreLine.score);
+        else
+            throw new ArgumentException("Object is not a ScoreLine");
     }
 
 }
@@ -165,8 +176,9 @@ public class gameOverMenuScript : MonoBehaviour {
         top10.Add(new scoreline(player1name,player2name,score));
         sr.Close();
         //schreibe nun die neuen scores in die File
-        //top10.Sort();         //geht erst wenn es eine CompareTo Methode in scoreline gibt
-        File.WriteAllText(fileName, string.Empty);   //<- hier ist der fehler
+        top10.Sort();
+        top10.Reverse();
+        File.WriteAllText(fileName, string.Empty);  
         var sr2 = File.AppendText(fileName);
         foreach ( scoreline sl in top10)
         {
