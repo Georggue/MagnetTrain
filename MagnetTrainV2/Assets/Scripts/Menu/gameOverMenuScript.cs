@@ -146,6 +146,7 @@ public class gameOverMenuScript : MonoBehaviour
         if (checkScore())
         {
             highscorePlayerNamesPopUp.enabled = true;
+            newHighscoreText.enabled = true;
         }
 
         playAgain.enabled = true;
@@ -196,7 +197,7 @@ public class gameOverMenuScript : MonoBehaviour
         else
         {
             var tmpList = _currentScoreBoard.ScoreEntries.OrderBy(x => x.Score, new SemiNumericComparer()).ToList();
-            tmpList[9] = new ScoreEntry
+            tmpList[0] = new ScoreEntry
             {
                 Player1 = p1name.text,
                 Player2 = p2name.text,
