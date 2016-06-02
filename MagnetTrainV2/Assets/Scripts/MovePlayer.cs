@@ -8,10 +8,14 @@ public class MovePlayer : MonoBehaviour {
     public KeyCode KeyRight;
     [Range(1,2)]
     public int PlayerNumber;
-    public float HorizontalSpeed;
-    private float _initialHorizontalSpeed;
+    public float MaximumHorizontalSpeed;
+    private float _initialMaximumHorizontalSpeed;
 	private bool _left = false;
 	private bool _right = false;
+
+	private float _horizontalSpeed;
+	private float _horizontalSpeedIncreaseFactor = 0.1f;
+	private float _horizontalStartSpeed = 0.01f;
 
 	// evtl Werte berechnen oder iwo herholen
 	private float _leftBorder = -4f;
@@ -37,7 +41,7 @@ public class MovePlayer : MonoBehaviour {
 
     void Awake()
     {
-        _initialHorizontalSpeed = HorizontalSpeed;
+        _initialMaximumHorizontalSpeed = MaximumHorizontalSpeed;
         ControlsActive = true;
     }
 
@@ -50,16 +54,19 @@ public class MovePlayer : MonoBehaviour {
         if (Input.GetKeyUp(KeyLeft)) _left = false;
         if (Input.GetKeyUp(KeyRight)) _right = false;
 
-        float xPosition = transform.position.x;
+		if (!_left && !_right) _horizontalSpeed = _horizontalStartSpeed;
+		else _horizontalSpeed = Mathf.Min(_horizontalSpeed + _horizontalSpeedIncreaseFactor * MaximumHorizontalSpeed, MaximumHorizontalSpeed);
+
+		float xPosition = transform.position.x;
 
         if (_left && xPosition >= _leftBorder)
         {
-            Util.Instance.MoveX(gameObject, -HorizontalSpeed);
+            Util.Instance.MoveX(gameObject, -_horizontalSpeed);
         }
 
         if (_right && xPosition <= _rightBorder)
         {
-            Util.Instance.MoveX(gameObject, HorizontalSpeed);
+            Util.Instance.MoveX(gameObject, _horizontalSpeed);
         }
     }
 
@@ -99,7 +106,7 @@ public class MovePlayer : MonoBehaviour {
 
     public void SetSpeedMultiplier(float factor)
     {
-        HorizontalSpeed = _initialHorizontalSpeed*factor;
+        MaximumHorizontalSpeed = _initialMaximumHorizontalSpeed*factor;
     }
 
 }
