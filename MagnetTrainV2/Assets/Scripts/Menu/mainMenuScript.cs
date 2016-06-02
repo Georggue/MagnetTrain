@@ -5,23 +5,36 @@ using System.Collections;
 
 public class mainMenuScript : MonoBehaviour {
 
-    public Canvas quitMenu;
-    public Canvas optionMenu;
+    public Image quitMenu;
+    public Image optionMenu;
     public Button startText;
     public Button optionText;
     public Button quitText;
-    public string difficulty;
+    public int difficulty = 0;
+    public Text[] difficultyOptions = new Text[4];
 
-	// Use this for initialization
-	void Start () {
-        quitMenu = quitMenu.GetComponent<Canvas>();
-        optionMenu = optionMenu.GetComponent<Canvas>();
+    private Color optionSelected = new Color(0, 255, 12, 255);
+    private Color optionUnselected = new Color(255, 79, 0, 255);
+
+    // Use this for initialization
+    void Start () {
+        quitMenu = quitMenu.GetComponent<Image>();
+        optionMenu = optionMenu.GetComponent<Image>();
         startText = startText.GetComponent<Button>();
         optionText = optionText.GetComponent<Button>();
         quitText = quitText.GetComponent<Button>();
+
         quitMenu.enabled = false;
+        foreach (Text c in quitMenu.GetComponentsInChildren<Text>())
+        {
+            c.enabled = false;
+        }
+
         optionMenu.enabled = false;
-        difficulty = "Easy";
+        foreach (Text c in optionMenu.GetComponentsInChildren<Text>())
+        {
+            c.enabled = false;
+        }
 	}
 	
     //wenn das Exit Untermenü aufgerufen wird
@@ -29,6 +42,10 @@ public class mainMenuScript : MonoBehaviour {
     {
         Debug.Log("Pressed Exit");
         quitMenu.enabled = true;
+        foreach (Text c in quitMenu.GetComponentsInChildren<Text>())
+        {
+            c.enabled = true;
+        }
         startText.enabled = false;
         optionText.enabled = false;
         quitText.enabled = false;       
@@ -39,6 +56,10 @@ public class mainMenuScript : MonoBehaviour {
     {
         Debug.Log("Pressed No");
         quitMenu.enabled = false;
+        foreach (Text c in quitMenu.GetComponentsInChildren<Text>())
+        {
+            c.enabled = false;
+        }
         startText.enabled = true;
         optionText.enabled = true;
         quitText.enabled = true;
@@ -49,6 +70,10 @@ public class mainMenuScript : MonoBehaviour {
     {
         Debug.Log("Pressed Options");
         optionMenu.enabled = true;
+        foreach (Text c in optionMenu.GetComponentsInChildren<Text>())
+        {
+            c.enabled = true;
+        }
         startText.enabled = false;
         optionText.enabled = false;
         quitText.enabled = false;
@@ -58,7 +83,11 @@ public class mainMenuScript : MonoBehaviour {
     public void PressReturn()
     {
         Debug.Log("Pressed Return");
-        quitMenu.enabled = false;
+        optionMenu.enabled = false;
+        foreach (Text c in optionMenu.GetComponentsInChildren<Text>())
+        {
+            c.enabled = false;
+        }
         startText.enabled = true;
         optionText.enabled = true;
         quitText.enabled = true;
@@ -81,32 +110,64 @@ public class mainMenuScript : MonoBehaviour {
     //wenn die Difficulty auf Easy gesetzt wird
     public void PressDifficultyEasy()
     {
-        difficulty = "Easy";
+        difficulty = 0;
         Debug.Log("Easy");
         //Setze Ausgewählte Difficulty highlightet, der Rest nicht
+        for (int i = 0; i < 4; i++)
+        {
+            difficultyOptions[i].color = optionUnselected;
+            if (i == 0)
+            {
+                difficultyOptions[i].color = optionSelected;
+            }
+        }
     }
 
     //wenn die Difficulty auf Medium gesetzt wird
     public void PressDifficultyMedium()
     {
-        difficulty = "Medium";
+        difficulty = 1;
         Debug.Log("Medium");
         //Setze Ausgewählte Difficulty highlightet, der Rest nicht
+        for (int i = 0; i < 4; i++)
+        {
+            difficultyOptions[i].color = optionUnselected;
+            if (i == 1)
+            {
+                difficultyOptions[i].color = optionSelected;
+            }
+        }
     }
 
     //wenn die Difficulty auf Hard gesetzt wird
     public void PressDifficultyHard()
     {
-        difficulty = "Hard";
+        difficulty = 2;
         Debug.Log("Hard");
         //Setze Ausgewählte Difficulty highlightet, der Rest nicht
+        for(int i = 0; i < 4; i++)
+        {
+            difficultyOptions[i].color = optionUnselected;
+            if(i == 2)
+            {
+                difficultyOptions[i].color = optionSelected;
+            } 
+        }
     }
 
     //wenn die Difficulty auf Mixed gesetzt wird
     public void PressDifficultyMixed()
     {
-        difficulty = "Mixed";
+        difficulty = 3;
         Debug.Log("Mixed");
         //Setze Ausgewählte Difficulty highlightet, der Rest nicht
+        for (int i = 0; i < 4; i++)
+        {
+            difficultyOptions[i].color = optionUnselected;
+            if (i == 3)
+            {
+                difficultyOptions[i].color = optionSelected;
+            }
+        }
     }
 }
