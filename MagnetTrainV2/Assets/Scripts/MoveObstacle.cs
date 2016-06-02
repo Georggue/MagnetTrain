@@ -16,14 +16,14 @@ public class MoveObstacle : MonoBehaviour
     public float Speed;
 
     public MoveDirection StartingDirection;
-    private float _initialPosX;
+    //private float _initialPosX;
     private float _initialPosY;
     private int _factor;
     private float _maxHeight = 6f;
     // Use this for initialization
     void Start()
     {
-        _initialPosX = transform.position.x;
+        //_initialPosX = transform.position.x;
         _initialPosY = transform.position.y;
         switch ((int)StartingDirection)
         {
