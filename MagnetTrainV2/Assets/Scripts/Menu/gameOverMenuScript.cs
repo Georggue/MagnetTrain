@@ -147,11 +147,16 @@ public class gameOverMenuScript : MonoBehaviour
         {
             highscorePlayerNamesPopUp.enabled = true;
             newHighscoreText.enabled = true;
+            playAgain.enabled = false;
+            exitGame.enabled = false;
+            openScoreBoard.enabled = false;
         }
-
-        playAgain.enabled = true;
-        exitGame.enabled = true;
-        openScoreBoard.enabled = true;
+        else
+        {
+            playAgain.enabled = true;
+            exitGame.enabled = true;
+            openScoreBoard.enabled = true;
+        }
 
     }
     public class SemiNumericComparer : IComparer<string>
