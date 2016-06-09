@@ -65,7 +65,7 @@ public class MoveObstacle : MonoBehaviour
         else
         {
             transform.position += new Vector3(0f, Speed * _factor, 0f);
-            Debug.Log("posy " + transform.position.y + " height " + halfWidthY + " sum: " + (transform.position.y + halfWidthY));
+            //Debug.Log("posy " + transform.position.y + " height " + halfWidthY + " sum: " + (transform.position.y + halfWidthY));
             if (_initialPosY > 0 &&
                 ((transform.position.y + halfWidthY > _maxHeight + double.Epsilon) ||
                  (transform.position.y <= halfWidthY )))

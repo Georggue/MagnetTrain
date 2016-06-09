@@ -7,6 +7,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Xml.Serialization;
 using System.Linq;
+using System.Xml;
 
 #region ScoreBoard Model
 /// <remarks/>
@@ -17,8 +18,12 @@ using System.Linq;
 [System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false)]
 public partial class ScoreBoard
 {
+    public ScoreBoard()
+    {
+        _scoreEntries = new List<ScoreEntry>();
+    }
 
-    private List<ScoreEntry> scoreEntries;
+    private List<ScoreEntry> _scoreEntries;
 
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("ScoreEntry", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
@@ -26,11 +31,11 @@ public partial class ScoreBoard
     {
         get
         {
-            return this.scoreEntries;
+            return this._scoreEntries;
         }
         set
         {
-            this.scoreEntries = value;
+            this._scoreEntries = value;
         }
     }
 }
@@ -93,69 +98,78 @@ public partial class ScoreEntry
 }
 #endregion
 
-public class gameOverMenuScript : MonoBehaviour
+public class GameOverMenuScript : MonoBehaviour
 {
 
-    private int score;
-    private string player1name = "Dummy1";
-    private string player2name = "Dummy2";
+    private int _score;
+    private string _player1Name = "Dummy1";
+    private string _player2Name = "Dummy2";
     private bool top10Entriesfull;
 
-    public Button playAgain;
-    public Button exitGame;
-    public Button openScoreBoard;
-    public Text scoreText;
+    public Button PlayAgain;
+    public Button ExitGame;
+    public Button OpenScoreBoard;
+    public Text ScoreText;
 
     private string fileName = "scoreboard.txt";
-    private string xmlFileName = "scoreboard.xml";
+    public string FileName = @"scoreboard.xml";
 
-    public Canvas scoreboardMenu;
-    public Canvas gameOverMenu;
+    public Canvas ScoreboardMenu;
+    public Canvas GameOverMenu;
 
-    public Text[] scoreTexte = new Text[10];
-    public Text newHighscoreText;
-    public Text playersThatSetTheHighscoreText;
+    public Text[] ScoreTexte = new Text[10];
+    public Text NewHighscoreText;
+    public Text PlayersThatSetTheHighscoreText;
 
-    public Text p1name;
-    public Text p2name;
-    public Canvas highscorePlayerNamesPopUp;
+    public Text P1Name;
+    public Text P2Name;
+    public Canvas HighscorePlayerNamesPopUp;
 
     private ScoreBoard _currentScoreBoard = null;
+
+    public GameOverMenuScript(bool top10Entriesfull)
+    {
+        this.top10Entriesfull = top10Entriesfull;
+    }
+
     // Use this for initialization
     void Start()
     {
        
-        playAgain = playAgain.GetComponent<Button>();
-        exitGame = exitGame.GetComponent<Button>();
-        playAgain.enabled = false;
-        exitGame.enabled = false;
+        PlayAgain = PlayAgain.GetComponent<Button>();
+        ExitGame = ExitGame.GetComponent<Button>();
+        PlayAgain.enabled = false;
+        ExitGame.enabled = false;
 
-        scoreboardMenu = scoreboardMenu.GetComponent<Canvas>();
-        gameOverMenu = gameOverMenu.GetComponent<Canvas>();
-        highscorePlayerNamesPopUp = highscorePlayerNamesPopUp.GetComponent<Canvas>();
-        newHighscoreText.enabled = false;
-        scoreboardMenu.enabled = false;
-        playersThatSetTheHighscoreText.enabled = false;
-        highscorePlayerNamesPopUp.enabled = false;
-        score = GameManager.Instance.Score;
-        scoreText.enabled = false;
-        scoreText.text = "SCORE: " + score.ToString();
+        ScoreboardMenu = ScoreboardMenu.GetComponent<Canvas>();
+        GameOverMenu = GameOverMenu.GetComponent<Canvas>();
+        HighscorePlayerNamesPopUp = HighscorePlayerNamesPopUp.GetComponent<Canvas>();
+        NewHighscoreText.enabled = false;
+        ScoreboardMenu.enabled = false;
+        PlayersThatSetTheHighscoreText.enabled = false;
+        HighscorePlayerNamesPopUp.enabled = false;
+        _score = GameManager.Instance.Score;
+        ScoreText.enabled = false;
+        ScoreText.text = "SCORE: " + _score.ToString();
         _currentScoreBoard = ReadScores();
-
-
-        if (checkScore())
+        if (_currentScoreBoard == null)
         {
-            highscorePlayerNamesPopUp.enabled = true;
-            newHighscoreText.enabled = true;
-            playAgain.enabled = false;
-            exitGame.enabled = false;
-            openScoreBoard.enabled = false;
+            _currentScoreBoard = new ScoreBoard();
+        }
+
+        if (CheckScore())
+        {
+            HighscorePlayerNamesPopUp.enabled = true;
+            NewHighscoreText.enabled = true;
+            PlayAgain.enabled = false;
+            ExitGame.enabled = false;
+            OpenScoreBoard.enabled = false;
         }
         else
         {
-            playAgain.enabled = true;
-            exitGame.enabled = true;
-            openScoreBoard.enabled = true;
+            PlayAgain.enabled = true;
+            ExitGame.enabled = true;
+            OpenScoreBoard.enabled = true;
         }
 
     }
@@ -197,16 +211,16 @@ public class gameOverMenuScript : MonoBehaviour
     {
         if (_currentScoreBoard.ScoreEntries.Count < 10)
         {
-            _currentScoreBoard.ScoreEntries.Add(new ScoreEntry { Player1 = p1name.text, Player2 = p2name.text, Score = score.ToString() });
+            _currentScoreBoard.ScoreEntries.Add(new ScoreEntry { Player1 = P1Name.text, Player2 = P2Name.text, Score = _score.ToString() });
         }
         else
         {
             var tmpList = _currentScoreBoard.ScoreEntries.OrderBy(x => x.Score, new SemiNumericComparer()).ToList();
             tmpList[0] = new ScoreEntry
             {
-                Player1 = p1name.text,
-                Player2 = p2name.text,
-                Score = score.ToString()
+                Player1 = P1Name.text,
+                Player2 = P2Name.text,
+                Score = _score.ToString()
             };
             _currentScoreBoard.ScoreEntries = tmpList.OrderBy(x => x.Score, new SemiNumericComparer()).ToList();
         }
@@ -216,12 +230,25 @@ public class gameOverMenuScript : MonoBehaviour
 
     private ScoreBoard ReadScores()
     {
-        ScoreBoard scoreboard = null;
         XmlSerializer serializer = new XmlSerializer(typeof(ScoreBoard));
-        if (File.Exists(fileName))
+        if (File.Exists(FileName))
         {
-            FileStream scoreFileStream = new FileStream(xmlFileName, FileMode.OpenOrCreate);
-            scoreboard = (ScoreBoard)serializer.Deserialize(scoreFileStream);
+            FileStream scoreFileStream = new FileStream(FileName, FileMode.OpenOrCreate);
+            ScoreBoard scoreboard;
+            try
+            {
+                scoreboard = (ScoreBoard) serializer.Deserialize(scoreFileStream);
+            }
+            catch (XmlException e)
+            {
+                scoreFileStream.Close();
+                Debug.Log("Error while parsing scoreboard, discarding old and creating new one");
+                scoreboard = new ScoreBoard();
+                WriteScores(scoreboard);
+                return scoreboard;
+            }
+           
+          
             scoreFileStream.Close();
             return scoreboard;
         }
@@ -234,7 +261,7 @@ public class gameOverMenuScript : MonoBehaviour
     private void WriteScores(ScoreBoard newScores)
     {
         XmlSerializer serializer = new XmlSerializer(typeof(ScoreBoard));
-        FileStream scoreFileStream = new FileStream(xmlFileName, FileMode.OpenOrCreate);
+        FileStream scoreFileStream = new FileStream(FileName, FileMode.OpenOrCreate);
         List<ScoreEntry> entries = newScores.ScoreEntries;
         newScores.ScoreEntries = entries.OrderBy(x => x.Score, new SemiNumericComparer()).ToList();
         newScores.ScoreEntries.Reverse();
@@ -242,20 +269,25 @@ public class gameOverMenuScript : MonoBehaviour
         scoreFileStream.Close();
     }
 
-    private bool checkScore()
+    private bool CheckScore()
     {
-        bool newEntry = false;
-        foreach (var scoreEntry in _currentScoreBoard.ScoreEntries)
+        bool newEntry = false || _currentScoreBoard != null && _currentScoreBoard.ScoreEntries.Count == 0;
+        //Wenn noch kein Scoreboard angelegt wurde -> Leeres Scoreboard, dann auf jeden Fall einfügen
+        if (_currentScoreBoard != null)
         {
-            int scoreVal = 0;
-            if (int.TryParse(scoreEntry.Score, out scoreVal))
+            foreach (var scoreEntry in _currentScoreBoard.ScoreEntries)
             {
-                if (scoreVal > score || _currentScoreBoard.ScoreEntries.Count < 10)
+                int scoreVal = 0;
+                if (int.TryParse(scoreEntry.Score, out scoreVal))
                 {
-                    newEntry = true;
+                    if (scoreVal > _score || _currentScoreBoard.ScoreEntries.Count < 10)
+                    {
+                        newEntry = true;
+                    }
                 }
             }
         }
+       
         return newEntry;
     }
 
@@ -277,34 +309,34 @@ public class gameOverMenuScript : MonoBehaviour
         int i = 0;
         foreach (var scoreEntry in _currentScoreBoard.ScoreEntries)
         {
-            scoreTexte[i].text = (i + 1) + ": Player1: " + scoreEntry.Player1 + " Player2: " + scoreEntry.Player2 + " Score: " + scoreEntry.Score;
+            ScoreTexte[i].text = (i + 1) + ": Player1: " + scoreEntry.Player1 + " Player2: " + scoreEntry.Player2 + " Score: " + scoreEntry.Score;
             i++;
         }
-        scoreboardMenu.enabled = true;
-        gameOverMenu.enabled = false;
+        ScoreboardMenu.enabled = true;
+        GameOverMenu.enabled = false;
     }
 
     //wird aufgerufen, wenn der Return Button im Scoreboard gedrückt wird
     public void PressReturn()
     {
-        scoreboardMenu.enabled = false;
-        gameOverMenu.enabled = true;
+        ScoreboardMenu.enabled = false;
+        GameOverMenu.enabled = true;
     }
 
     //wird aufgerufen, wenn der Button Confirm gedrückt wird nachdem die Spielernamen eingetragen wurden im PopUp das erscheint wenn ein Neuer Highscore erreicht wurde
-    public void confirmPlayerNames()
+    public void ConfirmPlayerNames()
     {
-        player1name = p1name.text;
-        player2name = p2name.text;
-        playersThatSetTheHighscoreText.enabled = true;
-        playersThatSetTheHighscoreText.text = "SET BY " + player1name + " & " + player2name;
+        _player1Name = P1Name.text;
+        _player2Name = P2Name.text;
+        PlayersThatSetTheHighscoreText.enabled = true;
+        PlayersThatSetTheHighscoreText.text = "SET BY " + _player1Name + " & " + _player2Name;
         UpdateScores();
-        scoreText.enabled = true;
+        ScoreText.enabled = true;
 
-        highscorePlayerNamesPopUp.enabled = false;
-        playAgain.enabled = true;
-        exitGame.enabled = true;
-        openScoreBoard.enabled = true;
+        HighscorePlayerNamesPopUp.enabled = false;
+        PlayAgain.enabled = true;
+        ExitGame.enabled = true;
+        OpenScoreBoard.enabled = true;
     }
 }
 

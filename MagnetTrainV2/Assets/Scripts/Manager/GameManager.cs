@@ -172,7 +172,7 @@ public class GameManager : MonoBehaviour
 
     private void SetPlayerControlAndColliderStatus(bool playerControlsEnabled)
     {
-        Debug.Log("Rewinding is " + !playerControlsEnabled);
+        //Debug.Log("Rewinding is " + !playerControlsEnabled);
         _rewinding = !playerControlsEnabled;
         var playerScripts = FindObjectsOfType(typeof(MovePlayer));
         if (!playerControlsEnabled)
