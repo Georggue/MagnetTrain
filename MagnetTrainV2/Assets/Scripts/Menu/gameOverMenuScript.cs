@@ -127,6 +127,9 @@ public class GameOverMenuScript : MonoBehaviour
 
     private ScoreBoard _currentScoreBoard = null;
 
+    public AudioClip gameOverSound;
+    public AudioClip newHighscoreSound;
+
     public GameOverMenuScript(bool top10Entriesfull)
     {
         this.top10Entriesfull = top10Entriesfull;
@@ -164,15 +167,19 @@ public class GameOverMenuScript : MonoBehaviour
             PlayAgain.enabled = false;
             ExitGame.enabled = false;
             OpenScoreBoard.enabled = false;
+            AudioSource.PlayClipAtPoint(newHighscoreSound, Camera.main.transform.position);
+            Debug.Log("a");
         }
         else
         {
+            Debug.Log("b");
             PlayAgain.enabled = true;
             ExitGame.enabled = true;
             OpenScoreBoard.enabled = true;
+            AudioSource.PlayClipAtPoint(gameOverSound, Camera.main.transform.position);
         }
-
     }
+
     public class SemiNumericComparer : IComparer<string>
     {
         public int Compare(string s1, string s2)

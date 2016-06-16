@@ -16,6 +16,8 @@ public class mainMenuScript : MonoBehaviour {
     private Color optionSelected = new Color(0, 255, 12, 255);
     private Color optionUnselected = new Color(255, 79, 0, 255);
 
+    public AudioClip mainMenuMusic;
+
     // Use this for initialization
     void Start () {
         quitMenu = quitMenu.GetComponent<Image>();
@@ -35,7 +37,10 @@ public class mainMenuScript : MonoBehaviour {
         {
             c.enabled = false;
         }
-	}
+
+        //Play MainMenu Audio
+        AudioSource.PlayClipAtPoint(mainMenuMusic, Camera.main.transform.position);
+    }
 	
     //wenn das Exit Untermenü aufgerufen wird
     public void ExitPress()
@@ -96,7 +101,7 @@ public class mainMenuScript : MonoBehaviour {
     //wenn Play gedrückt wird
     public void StartGame()
     {
-        Debug.Log("Pressed Play");
+        //Debug.Log("Pressed Play");
         SceneManager.LoadScene("GameScene");
     }
 

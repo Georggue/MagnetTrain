@@ -44,8 +44,16 @@ public class GameManager : MonoBehaviour
     public bool ReverseMagnet { get; set; }
     private float _player2StartPositionY = -0.65f;
 
+    //Playercolor
     private Material _player1Color;
     private Material _player2Color;
+
+    //Sounds
+    public AudioClip obstacleHitSound;
+    public AudioClip lifePickUpSound;
+    public AudioClip fallingDownSound;
+    public AudioClip playerSwitchSound;
+    public AudioClip gravityInversionSound;
 
 
     // Use this for initialization
@@ -131,8 +139,6 @@ public class GameManager : MonoBehaviour
 
     internal void TriggerObstacleHit(int playerNumber)
     {
-        
-
         var position = playerNumber == 1 ? Player1.transform.position : Player2.transform.position;
         Instantiate(ObstacleHitEffect, position, ObstacleHitEffect.transform.rotation);
         ResetPlayers();
@@ -146,6 +152,7 @@ public class GameManager : MonoBehaviour
             SceneManager.LoadScene("GameOverScene");
         }
     }
+
     private void ResetPlayers()
     {
         DecreasePlayerLife();

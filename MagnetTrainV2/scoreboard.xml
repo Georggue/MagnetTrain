@@ -1,8 +1,18 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <ScoreBoard xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <ScoreEntry>
+    <Player1>erte</Player1>
+    <Player2>t</Player2>
+    <Score>1160</Score>
+  </ScoreEntry>
+  <ScoreEntry>
     <Player1>jo</Player1>
     <Player2>letsgo</Player2>
     <Score>420</Score>
+  </ScoreEntry>
+  <ScoreEntry>
+    <Player1>sdsad</Player1>
+    <Player2>daasda</Player2>
+    <Score>230</Score>
   </ScoreEntry>
 </ScoreBoard>
