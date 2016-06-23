@@ -177,7 +177,7 @@ public class GameOverMenuScript : MonoBehaviour
             OpenScoreBoard.enabled = true;
             AudioSource.PlayClipAtPoint(gameOverSound, Camera.main.transform.position);
         }
-        Invoke("PlayMenuSound", 1.5f);
+        Invoke("PlayMenuSound", 5);
     }
 
 
