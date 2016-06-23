@@ -310,7 +310,8 @@ public class GameManager : MonoBehaviour
         Material tempMaterial = _player1Color;
         _player1Color = _player2Color;
         _player2Color = tempMaterial;
-
+        Player1.transform.GetChild(0).GetComponent<Renderer>().material = _player1Color;
+        Player2.transform.GetChild(0).GetComponent<Renderer>().material = _player2Color;
         Player1.GetComponent<Renderer>().material = _player1Color;
         Player2.GetComponent<Renderer>().material = _player2Color;
 
