@@ -5,10 +5,4 @@
 
 * Death animation
 
-* Model für beide Player erstellen
-
-* Texturen erstellen (Wand, Pickup, Linie, Lane)
-
-* Skybox ändern
-
 * Let's Play Video erstellen
