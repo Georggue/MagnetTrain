@@ -129,6 +129,7 @@ public class GameOverMenuScript : MonoBehaviour
 
     public AudioClip gameOverSound;
     public AudioClip newHighscoreSound;
+    public AudioClip menuMusic;
 
     public GameOverMenuScript(bool top10Entriesfull)
     {
@@ -168,17 +169,17 @@ public class GameOverMenuScript : MonoBehaviour
             ExitGame.enabled = false;
             OpenScoreBoard.enabled = false;
             AudioSource.PlayClipAtPoint(newHighscoreSound, Camera.main.transform.position);
-            Debug.Log("a");
         }
         else
         {
-            Debug.Log("b");
             PlayAgain.enabled = true;
             ExitGame.enabled = true;
             OpenScoreBoard.enabled = true;
             AudioSource.PlayClipAtPoint(gameOverSound, Camera.main.transform.position);
         }
+        Invoke("PlayMenuSound", 1.5f);
     }
+
 
     public class SemiNumericComparer : IComparer<string>
     {
@@ -344,6 +345,12 @@ public class GameOverMenuScript : MonoBehaviour
         PlayAgain.enabled = true;
         ExitGame.enabled = true;
         OpenScoreBoard.enabled = true;
+    }
+
+    //Starts the Menu Music
+    public void PlayMenuSound()
+    {
+        AudioSource.PlayClipAtPoint(menuMusic, Camera.main.transform.position);
     }
 }
 

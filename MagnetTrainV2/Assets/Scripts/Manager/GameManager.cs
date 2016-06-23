@@ -50,11 +50,8 @@ public class GameManager : MonoBehaviour
 
     //Sounds
     public AudioClip obstacleHitSound;
-    public AudioClip lifePickUpSound;
     public AudioClip fallingDownSound;
-    public AudioClip playerSwitchSound;
-    public AudioClip gravityInversionSound;
-
+    public AudioClip gameMusic;
 
     // Use this for initialization
     void Start()
@@ -63,6 +60,7 @@ public class GameManager : MonoBehaviour
         _playerLife = 3;
         ScoreMultiplier = 1;
         ScoreText.text = "Score: " + Score.ToString() + " Multiplier: " + ScoreMultiplier.ToString() + "\n Leben: " + _playerLife.ToString();
+        Invoke("PlayGameSound", 1.5f);
     }
 
     // Update is called once per frame
@@ -102,6 +100,10 @@ public class GameManager : MonoBehaviour
 
         if (Player2.transform.localPosition.y < MaximumYValue)
         {
+            if (_playerLife > 1)
+            {
+                AudioSource.PlayClipAtPoint(fallingDownSound, Camera.main.transform.position);
+            }
             ResetPlayers();
 
             Util.Instance.SetY(Player2, _player2StartPositionY);
@@ -139,6 +141,10 @@ public class GameManager : MonoBehaviour
 
     internal void TriggerObstacleHit(int playerNumber)
     {
+        if (_playerLife > 1)
+        {
+            AudioSource.PlayClipAtPoint(obstacleHitSound, Camera.main.transform.position);
+        }
         var position = playerNumber == 1 ? Player1.transform.position : Player2.transform.position;
         Instantiate(ObstacleHitEffect, position, ObstacleHitEffect.transform.rotation);
         ResetPlayers();
@@ -319,4 +325,11 @@ public class GameManager : MonoBehaviour
         player1Script.ControlsActive = true;
         player2Script.ControlsActive = true;
     }
+    
+    //Starts the Menu Music
+    public void PlayGameSound()
+    {
+        AudioSource.PlayClipAtPoint(gameMusic, Camera.main.transform.position);
+    }
+
 }
