@@ -98,7 +98,7 @@ public partial class ScoreEntry
 }
 #endregion
 
-public class GameOverMenuScript : MonoBehaviour
+public class gameOverMenuScript : MonoBehaviour
 {
 
     private int _score;
@@ -131,7 +131,7 @@ public class GameOverMenuScript : MonoBehaviour
     public AudioClip newHighscoreSound;
     public AudioClip menuMusic;
 
-    public GameOverMenuScript(bool top10Entriesfull)
+    public gameOverMenuScript(bool top10Entriesfull)
     {
         this.top10Entriesfull = top10Entriesfull;
     }
