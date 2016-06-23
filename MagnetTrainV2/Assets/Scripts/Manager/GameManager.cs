@@ -59,8 +59,9 @@ public class GameManager : MonoBehaviour
         Score = 0;
         _playerLife = 3;
         ScoreMultiplier = 1;
-        ScoreText.text = "Score: " + Score.ToString() + " Multiplier: " + ScoreMultiplier.ToString() + "\n Leben: " + _playerLife.ToString();
-        Invoke("PlayGameSound", 1.5f);
+		SetScoreText();
+
+		Invoke("PlayGameSound", 1.5f);
     }
 
     // Update is called once per frame
@@ -69,10 +70,14 @@ public class GameManager : MonoBehaviour
         CheckPlayerDistance();
 
         CheckForSpeedUpdate();
-        ScoreText.text = "Score: " + Score.ToString() + " Multiplier: " + ScoreMultiplier.ToString() + "\n Leben: " + _playerLife.ToString();
-    }
+		SetScoreText();
+	}
+	private void SetScoreText()
+	{
+		ScoreText.text = "Score: " + Score + "\nLifes: " + _playerLife;
+	}
 
-    private void CheckPlayerDistance()
+	private void CheckPlayerDistance()
     {
         var distance = Player1.transform.localPosition.x - Player2.transform.localPosition.x;
         distance = Mathf.Abs(distance);
