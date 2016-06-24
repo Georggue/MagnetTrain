@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Xml.Schema;
 
 public class MovePlayer : MonoBehaviour {
@@ -22,6 +24,12 @@ public class MovePlayer : MonoBehaviour {
 	private float _rightBorder = 4f;
     private bool _controlsActive = true;
     private Vector3 initialRot;
+    private Vector3 initialCameraPos;
+
+    private Vector3 newRotLeft; 
+    private Vector3 newRotRight; 
+    private Quaternion newRotLeftQuat; 
+    private Quaternion newRotRightQuat; 
     public bool ControlsActive
     {
         get
@@ -44,7 +52,21 @@ public class MovePlayer : MonoBehaviour {
         _initialMaximumHorizontalSpeed = MaximumHorizontalSpeed;
         ControlsActive = true;
         initialRot = transform.rotation.eulerAngles;
-    }
+        initialCameraPos = transform.GetChild(3).rotation.eulerAngles;
+        newRotLeft = new Vector3(initialRot.x, initialRot.y, initialRot.z + 30);
+        newRotRight = new Vector3(initialRot.x, initialRot.y, initialRot.z - 30);
+        if (PlayerNumber == 1)
+        {
+            newRotLeftQuat = Quaternion.Euler(newRotLeft);
+            newRotRightQuat = Quaternion.Euler(newRotRight);
+        }
+        else
+        {
+            newRotRightQuat = Quaternion.Euler(newRotLeft);
+            newRotLeftQuat = Quaternion.Euler(newRotRight);
+        }
+       
+}
 
     void Update()
     {
@@ -55,10 +77,17 @@ public class MovePlayer : MonoBehaviour {
         if (Input.GetKeyUp(KeyLeft)) _left = false;
         if (Input.GetKeyUp(KeyRight)) _right = false;
 
-        var newRotLeft = new Vector3(initialRot.x, initialRot.y, initialRot.z + 30);
-        var newRotRight = new Vector3(initialRot.x, initialRot.y, initialRot.z - 30);
-        var newRotLeftQuat = Quaternion.Euler(newRotLeft);
-        var newRotRightQuat = Quaternion.Euler(newRotRight);
+       
+
+        var newRotLeftCamera = new Vector3(initialCameraPos.x, initialCameraPos.y, initialCameraPos.z + 30);
+        var newRotRightCamera = new Vector3(initialCameraPos.x, initialCameraPos.y, initialCameraPos.z - 30);
+        var newRotLeftQuatCamera = Quaternion.Euler(newRotLeftCamera);
+        var newRotRightQuatCamera = Quaternion.Euler(newRotRightCamera);
+
+        var body = transform.GetChild(0);
+        var cockpit = transform.GetChild(1);
+        var cockpitGlass = transform.GetChild(2);
+        List<Transform> model = new List<Transform> {body, cockpit, cockpitGlass};
 
         if (!_left && !_right) _horizontalSpeed = _horizontalStartSpeed;
         else _horizontalSpeed = Mathf.Min(_horizontalSpeed + _horizontalSpeedIncreaseFactor * MaximumHorizontalSpeed, MaximumHorizontalSpeed);
@@ -69,16 +98,26 @@ public class MovePlayer : MonoBehaviour {
         {
             Debug.Log("left dir");
             Util.Instance.MoveX(gameObject, -_horizontalSpeed);
-            transform.rotation = Quaternion.Slerp(transform.rotation, newRotLeftQuat, Time.deltaTime * 2.0F);
+            foreach (var trans in model)
+            {
+                trans.rotation = Quaternion.Slerp(trans.rotation, newRotRightQuat, Time.deltaTime * 2.0F);
+            }
         }
         else if (_right && xPosition <= _rightBorder)
         {
             Util.Instance.MoveX(gameObject, _horizontalSpeed);
-            transform.rotation = Quaternion.Slerp(transform.rotation, newRotRightQuat, Time.deltaTime * 2.0F);
+            foreach (var trans in model)
+            {
+                trans.rotation = Quaternion.Slerp(trans.rotation, newRotLeftQuat, Time.deltaTime * 2.0F);
+            }
         }
         else
         {
-            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(initialRot), Time.deltaTime * 2.0F);
+            foreach (var trans in model)
+            {
+                trans.rotation = Quaternion.Slerp(trans.rotation, Quaternion.Euler(initialRot), Time.deltaTime * 2.0F);
+            }
+           
         }
     }
 
