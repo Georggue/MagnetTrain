@@ -10,16 +10,17 @@ public class mainMenuScript : MonoBehaviour {
     public Button startText;
     public Button optionText;
     public Button quitText;
-    public int difficulty = 0;
+    public int difficulty = 3;
     public Text[] difficultyOptions = new Text[4];
 
-    private Color optionSelected = new Color(0, 255, 12, 255);
-    private Color optionUnselected = new Color(255, 79, 0, 255);
+    private Color optionSelected = new Color32(255, 0, 78, 255);
+    private Color optionUnselected = new Color32(255, 255, 255, 255);
 
     public AudioClip mainMenuMusic;
 
     // Use this for initialization
     void Start () {
+
         quitMenu = quitMenu.GetComponent<Image>();
         optionMenu = optionMenu.GetComponent<Image>();
         startText = startText.GetComponent<Button>();
@@ -40,6 +41,7 @@ public class mainMenuScript : MonoBehaviour {
 
         //Play MainMenu Audio
         AudioSource.PlayClipAtPoint(mainMenuMusic, Camera.main.transform.position);
+
     }
 	
     //wenn das Exit Untermenü aufgerufen wird
@@ -59,15 +61,15 @@ public class mainMenuScript : MonoBehaviour {
     //wenn im Exit Untermenü auf Nein geklickt wird
     public void NoPress()
     {
-        Debug.Log("Pressed No");
+        //Debug.Log("Pressed No");
         quitMenu.enabled = false;
         foreach (Text c in quitMenu.GetComponentsInChildren<Text>())
         {
             c.enabled = false;
         }
-        startText.enabled = true;
-        optionText.enabled = true;
-        quitText.enabled = true;
+        startText.GetComponent<Text>().enabled = true;
+        optionText.GetComponent<Text>().enabled = true;
+        quitText.GetComponent<Text>().enabled = true;
     }
 
     //wenn das Optionsmenü aufgerufen wird
@@ -79,9 +81,18 @@ public class mainMenuScript : MonoBehaviour {
         {
             c.enabled = true;
         }
-        startText.enabled = false;
-        optionText.enabled = false;
-        quitText.enabled = false;
+        startText.GetComponent<Text>().enabled = false;
+        optionText.GetComponent<Text>().enabled = false;
+        quitText.GetComponent<Text>().enabled = false;
+
+        for (int i = 0; i < 4; i++)
+        {
+            difficultyOptions[i].color = optionUnselected;
+            if (i == difficulty)
+            {
+                difficultyOptions[i].color = optionSelected;
+            }
+        }
     }
 
     //wenn im Optionsmenü return gedrückt wird
@@ -93,9 +104,9 @@ public class mainMenuScript : MonoBehaviour {
         {
             c.enabled = false;
         }
-        startText.enabled = true;
-        optionText.enabled = true;
-        quitText.enabled = true;
+        startText.GetComponent<Text>().enabled = true;
+        optionText.GetComponent<Text>().enabled = true;
+        quitText.GetComponent<Text>().enabled = true;
     }
 
     //wenn Play gedrückt wird
