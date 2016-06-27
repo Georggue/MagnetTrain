@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 using System;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using ProgressBar;
 
 public class GameManager : MonoBehaviour
 {
@@ -34,6 +35,8 @@ public class GameManager : MonoBehaviour
     public Text ScoreText;
     public int Score;
     public int ScoreMultiplier;
+
+     
     //Variablen für Spielerleben
     private int _playerLife;
     //Variablen für Playermovementspeed
@@ -113,6 +116,19 @@ public class GameManager : MonoBehaviour
 
             Util.Instance.SetY(Player2, _player2StartPositionY);
         }
+	    var progressbar = GameObject.Find("ProgressBarLabelFollow");
+        var progressBarBehaviour = progressbar.GetComponentInChildren<ProgressBarBehaviour>();
+
+        progressBarBehaviour.Value = (Player2.transform.localPosition.y/MaximumYValue)*100;
+	    var progressbarColor = progressbar.GetComponentInChildren<Text>();
+	    if (progressBarBehaviour.Value > 50)
+	    {
+	        progressbarColor.color = Color.red;
+	    }
+	    else
+	    {
+	        progressbarColor.color = Color.black;
+	    }
     }
 
     void Awake()
