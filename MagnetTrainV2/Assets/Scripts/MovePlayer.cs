@@ -96,7 +96,6 @@ public class MovePlayer : MonoBehaviour {
 
         if (_left && xPosition >= _leftBorder)
         {
-            Debug.Log("left dir");
             Util.Instance.MoveX(gameObject, -_horizontalSpeed);
             foreach (var trans in model)
             {
@@ -123,7 +122,7 @@ public class MovePlayer : MonoBehaviour {
 
     void OnTriggerEnter(Collider coll)
     {
-        Debug.Log("Trigger Hit");
+        //Debug.Log("Trigger Hit");
 
         if (coll.tag == Tags.Obstacle)
         {

@@ -38,8 +38,12 @@ public class Util : MonoBehaviour
     {
         return Random.Range(min, max);
 	}
+    public float GetRandomValue(float min, float max)
+    {
+        return Random.Range(min, max);
+    }
 
-	public void SetY(GameObject curGameObject, float y)
+    public void SetY(GameObject curGameObject, float y)
 	{
 		Vector3 newPosition = curGameObject.transform.position;
 		newPosition.y = y;

@@ -126,6 +126,7 @@ public class mainMenuScript : MonoBehaviour {
     //wenn die Difficulty auf Easy gesetzt wird
     public void PressDifficultyEasy()
     {
+        PlayerPrefs.SetInt("Difficulty", (int)LaneManager.GameDifficulty.Easy);
         difficulty = 0;
         Debug.Log("Easy");
         //Setze Ausgewählte Difficulty highlightet, der Rest nicht
@@ -142,6 +143,7 @@ public class mainMenuScript : MonoBehaviour {
     //wenn die Difficulty auf Medium gesetzt wird
     public void PressDifficultyMedium()
     {
+        PlayerPrefs.SetInt("Difficulty", (int)LaneManager.GameDifficulty.Medium);
         difficulty = 1;
         Debug.Log("Medium");
         //Setze Ausgewählte Difficulty highlightet, der Rest nicht
@@ -158,6 +160,7 @@ public class mainMenuScript : MonoBehaviour {
     //wenn die Difficulty auf Hard gesetzt wird
     public void PressDifficultyHard()
     {
+        PlayerPrefs.SetInt("Difficulty", (int)LaneManager.GameDifficulty.Hard);
         difficulty = 2;
         Debug.Log("Hard");
         //Setze Ausgewählte Difficulty highlightet, der Rest nicht
@@ -174,6 +177,7 @@ public class mainMenuScript : MonoBehaviour {
     //wenn die Difficulty auf Mixed gesetzt wird
     public void PressDifficultyMixed()
     {
+        PlayerPrefs.SetInt("Difficulty", (int)LaneManager.GameDifficulty.Mixed);
         difficulty = 3;
         Debug.Log("Mixed");
         //Setze Ausgewählte Difficulty highlightet, der Rest nicht
