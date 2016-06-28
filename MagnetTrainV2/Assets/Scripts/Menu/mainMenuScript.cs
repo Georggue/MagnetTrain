@@ -16,7 +16,7 @@ public class mainMenuScript : MonoBehaviour {
     private Color optionSelected = new Color32(255, 0, 78, 255);
     private Color optionUnselected = new Color32(255, 255, 255, 255);
 
-    public AudioClip mainMenuMusic;
+    public AudioSource mainMenuMusic;
 
     // Use this for initialization
     void Start () {
@@ -40,7 +40,7 @@ public class mainMenuScript : MonoBehaviour {
         }
 
         //Play MainMenu Audio
-        AudioSource.PlayClipAtPoint(mainMenuMusic, Camera.main.transform.position);
+        mainMenuMusic.Play();
 
     }
 	

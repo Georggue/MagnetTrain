@@ -351,7 +351,10 @@ public class GameManager : MonoBehaviour
     //Starts the Menu Music
     public void PlayGameSound()
     {
-        AudioSource.PlayClipAtPoint(gameMusic, Camera.main.transform.position);
+        gamemusic2.Play();
+       //AudioSource.PlayClipAtPoint(gameMusic, Camera.main.transform.position);
+        
     }
+    public AudioSource gamemusic2;
 
 }

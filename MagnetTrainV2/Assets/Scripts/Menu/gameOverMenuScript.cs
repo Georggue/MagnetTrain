@@ -129,7 +129,7 @@ public class gameOverMenuScript : MonoBehaviour
 
     public AudioClip gameOverSound;
     public AudioClip newHighscoreSound;
-    public AudioClip menuMusic;
+    public AudioSource menuMusic;
 
     public gameOverMenuScript(bool top10Entriesfull)
     {
@@ -305,6 +305,11 @@ public class gameOverMenuScript : MonoBehaviour
         Application.Quit();
     }
 
+    public void MainMenuPress()
+    {
+        SceneManager.LoadScene("MainMenuScene");
+    }
+
     //wird aufgerufen, wenn Play Again gedrückt wird
     public void PlayAgainPress()
     {
@@ -350,7 +355,7 @@ public class gameOverMenuScript : MonoBehaviour
     //Starts the Menu Music
     public void PlayMenuSound()
     {
-        AudioSource.PlayClipAtPoint(menuMusic, Camera.main.transform.position);
+        menuMusic.Play();
     }
 }
 
